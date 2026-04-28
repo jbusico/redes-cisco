@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes CISCO — Guía de Estudio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1e2335;
+    --border: #2a2f45;
+    --accent: #4f7cff;
+    --accent2: #ff4f6d;
+    --accent3: #4fffa8;
+    --text: #e8eaf0;
+    --text2: #8891b0;
+    --text3: #5a6282;
+    --correct: #2dd18a;
+    --wrong: #ff4f6d;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  .light {
+    --bg: #f4f5f9;
+    --surface: #ffffff;
+    --surface2: #eef0f8;
+    --border: #dde0ef;
+    --text: #1a1d2e;
+    --text2: #5a6282;
+    --text3: #9aa0bb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-dot {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .theme-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 50%;
+    width: 38px; height: 38px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .theme-btn:hover { background: var(--border); color: var(--text); }
+
+  /* ── HOME SCREEN ── */
+  #home {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .home-badge {
+    display: inline-block;
+    background: rgba(79,124,255,0.12);
+    border: 1px solid rgba(79,124,255,0.3);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 99px;
+    margin-bottom: 24px;
+  }
+  .home-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+  }
+  .home-title span { color: var(--accent); }
+  .home-sub {
+    color: var(--text2);
+    font-size: 1.05rem;
+    max-width: 480px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+  }
+  .mode-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 640px;
+    width: 100%;
+    margin-bottom: 36px;
+  }
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .mode-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.25s;
+  }
+  .mode-card.flash::before { background: var(--accent2); }
+  .mode-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
+  .mode-card.flash:hover { border-color: var(--accent2); }
+  .mode-card:hover::before { transform: scaleX(1); }
+  .mode-icon { font-size: 2.2rem; margin-bottom: 14px; }
+  .mode-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+  }
+  .mode-desc { color: var(--text2); font-size: 0.88rem; line-height: 1.5; }
+  .stats-bar {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 22px;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--accent);
+  }
+  .stat-label { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
+
+  /* ── SHARED SCREEN STYLES ── */
+  .screen { display: none; padding: 32px 20px; max-width: 780px; margin: 0 auto; }
+  .screen.active { display: block; }
+
+  .screen-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .back-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { color: var(--text); background: var(--border); }
+  .screen-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-bottom: 24px; }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+  .progress-bar-bg {
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #7ba4ff);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .score-chips {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .chip-green { background: rgba(45,209,138,0.12); color: var(--correct); border: 1px solid rgba(45,209,138,0.25); }
+  .chip-red { background: rgba(255,79,109,0.12); color: var(--wrong); border: 1px solid rgba(255,79,109,0.25); }
+  .chip-blue { background: rgba(79,124,255,0.12); color: var(--accent); border: 1px solid rgba(79,124,255,0.25); }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-module {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .q-text {
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    transition: all 0.18s;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+  }
+  .option:hover:not(.disabled) { border-color: var(--accent); background: rgba(79,124,255,0.07); }
+  .option.correct { border-color: var(--correct); background: rgba(45,209,138,0.1); }
+  .option.wrong   { border-color: var(--wrong); background: rgba(255,79,109,0.1); }
+  .option.disabled { cursor: default; }
+  .opt-letter {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Syne', sans-serif;
+    transition: all 0.18s;
+  }
+  .option:hover:not(.disabled) .opt-letter { background: var(--accent); color: #fff; }
+  .option.correct .opt-letter { background: var(--correct); color: #fff; }
+  .option.wrong .opt-letter   { background: var(--wrong); color: #fff; }
+  .opt-icon { margin-left: auto; font-size: 1.1rem; flex-shrink: 0; }
+
+  /* ── FEEDBACK ── */
+  .feedback-box {
+    border-radius: var(--radius-sm);
+    padding: 16px 18px;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    animation: fadeUp 0.25s ease;
+    display: none;
+  }
+  .feedback-box.show { display: block; }
+  .feedback-box.correct-fb { background: rgba(45,209,138,0.1); border: 1px solid rgba(45,209,138,0.3); }
+  .feedback-box.wrong-fb   { background: rgba(255,79,109,0.1);  border: 1px solid rgba(255,79,109,0.3); }
+  .feedback-title { font-weight: 700; margin-bottom: 6px; font-size: 0.95rem; }
+  .correct-fb .feedback-title { color: var(--correct); }
+  .wrong-fb .feedback-title   { color: var(--wrong); }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .btn {
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #3d6aff; transform: translateY(-1px); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-danger { background: rgba(255,79,109,0.12); color: var(--wrong); border: 1px solid rgba(255,79,109,0.25); }
+  .btn-danger:hover { background: rgba(255,79,109,0.22); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ── RESULTS ── */
+  .result-screen {
+    text-align: center;
+    padding: 48px 20px;
+  }
+  .result-emoji { font-size: 4rem; margin-bottom: 16px; }
+  .result-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+  .result-score {
+    font-size: 1rem;
+    color: var(--text2);
+    margin-bottom: 32px;
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 420px;
+    margin: 0 auto 36px;
+  }
+  .result-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 18px;
+  }
+  .result-box-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+  }
+  .result-box-label { font-size: 0.78rem; color: var(--text2); margin-top: 4px; }
+
+  /* ── FLASHCARDS ── */
+  .flashcard-wrap {
+    perspective: 1200px;
+    margin: 0 auto 28px;
+    max-width: 600px;
+  }
+  .flashcard {
+    position: relative;
+    height: 280px;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: var(--radius);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .card-front {
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .card-back {
+    background: linear-gradient(135deg, #1a2040, #1e2f50);
+    border: 1px solid var(--accent);
+    transform: rotateY(180deg);
+  }
+  .light .card-back {
+    background: linear-gradient(135deg, #eef2ff, #e0e8ff);
+    border-color: var(--accent);
+  }
+  .card-hint {
+    font-size: 0.75rem;
+    color: var(--text3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .card-back .card-hint { color: rgba(79,124,255,0.7); }
+  .card-front .q-module { margin-bottom: 12px; }
+  .card-question {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .card-answer {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text);
+  }
+  .card-answer strong { color: var(--accent); }
+
+  .flash-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .flash-counter {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text2);
+    min-width: 80px;
+    text-align: center;
+  }
+
+  /* ── MODULE FILTER — two-level grouped ── */
+  .filter-wrap { margin-bottom: 20px; }
+  .filter-group { margin-bottom: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .filter-group-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 14px; cursor: pointer;
+    background: var(--surface2); user-select: none;
+    transition: background 0.15s;
+  }
+  .filter-group-header:hover { background: var(--border); }
+  .filter-group-header.group-active { background: rgba(79,124,255,0.1); border-bottom: 1px solid rgba(79,124,255,0.25); }
+  .filter-group-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 0.85rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .filter-group-count {
+    font-size: 0.72rem; color: var(--text3); font-family: 'DM Sans', sans-serif; font-weight: 400;
+  }
+  .filter-group-arrow { font-size: 0.7rem; color: var(--text3); transition: transform 0.2s; }
+  .filter-group-arrow.open { transform: rotate(90deg); }
+  .filter-group-body { display: none; padding: 8px 10px; background: var(--surface); flex-wrap: wrap; gap: 6px; }
+  .filter-group-body.open { display: flex; }
+  .filter-chip-all {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 14px; cursor: pointer;
+    background: var(--surface2); border-bottom: 1px solid var(--border);
+    font-size: 0.85rem; font-weight: 600; color: var(--text2);
+    transition: all 0.15s; user-select: none;
+  }
+  .filter-chip-all:hover { background: var(--border); color: var(--text); }
+  .filter-chip-all.active { background: var(--accent); color: #fff; }
+  .filter-chip {
+    padding: 4px 11px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+  }
+  .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .filter-chip:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+  .filter-chip.group-select {
+    background: rgba(79,124,255,0.1); border-color: rgba(79,124,255,0.4); color: var(--accent); font-weight: 600;
+  }
+  .filter-chip.group-select.active, .filter-chip.group-select:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ── REPASO MODE ── */
+  .repaso-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,79,109,0.1);
+    border: 1px solid rgba(255,79,109,0.3);
+    color: var(--wrong);
+    padding: 5px 12px;
+    border-radius: 99px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-left: auto;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 22px;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    font-weight: 500;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── USER LOGIN MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    width: 100%; max-width: 420px;
+    animation: fadeUp 0.25s ease;
+    text-align: center;
+  }
+  .modal-icon { font-size: 2.5rem; margin-bottom: 16px; }
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+  .modal-sub { color: var(--text2); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.5; }
+  .user-list {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-bottom: 20px; max-height: 200px; overflow-y: auto;
+  }
+  .user-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    display: flex; align-items: center; gap: 12px;
+    transition: all 0.18s;
+    text-align: left;
+  }
+  .user-btn:hover { border-color: var(--accent); background: rgba(79,124,255,0.08); }
+  .user-btn-active { border-color: rgba(79,124,255,0.4) !important; background: rgba(79,124,255,0.06) !important; }
+  .icon-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text2); font-size: 0.8rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .icon-btn:hover { background: var(--border); color: var(--text); }
+  .icon-btn-danger:hover { background: rgba(255,79,109,0.15); border-color: var(--wrong); color: var(--wrong); }
+  .user-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #7ba4ff);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.85rem; color: #fff;
+    flex-shrink: 0; font-family: 'Syne', sans-serif;
+  }
+  .user-info { flex: 1; }
+  .user-name { font-weight: 600; font-size: 0.92rem; }
+  .user-stats-mini { font-size: 0.75rem; color: var(--text2); margin-top: 2px; }
+  .divider-or {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--text3); font-size: 0.8rem; margin-bottom: 16px;
+  }
+  .divider-or::before, .divider-or::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .input-row { display: flex; gap: 10px; }
+  .text-input {
+    flex: 1; padding: 11px 14px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .text-input:focus { border-color: var(--accent); }
+  .text-input::placeholder { color: var(--text3); }
+
+  /* ── RANKING SCREEN ── */
+  .ranking-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+  .rank-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px;
+    transition: all 0.2s; cursor: pointer;
+    position: relative; overflow: hidden;
+  }
+  .rank-card:hover { border-color: var(--accent); transform: translateX(4px); }
+  .rank-card.rank-1 { border-color: rgba(255,215,0,0.4); background: linear-gradient(90deg, rgba(255,215,0,0.05), var(--surface)); }
+  .rank-card.rank-2 { border-color: rgba(192,192,192,0.4); }
+  .rank-card.rank-3 { border-color: rgba(205,127,50,0.4); }
+  .rank-card.current-user { border-color: rgba(79,124,255,0.5); }
+  .rank-pos {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.3rem;
+    min-width: 32px; text-align: center;
+    color: var(--text3);
+  }
+  .rank-card.rank-1 .rank-pos { color: #ffd700; }
+  .rank-card.rank-2 .rank-pos { color: #c0c0c0; }
+  .rank-card.rank-3 .rank-pos { color: #cd7f32; }
+  .rank-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1rem; color: #fff;
+    flex-shrink: 0; font-family: 'Syne', sans-serif;
+  }
+  .rank-info { flex: 1; min-width: 0; }
+  .rank-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .rank-detail { font-size: 0.78rem; color: var(--text2); margin-top: 3px; }
+  .rank-score-wrap { text-align: right; flex-shrink: 0; }
+  .rank-score-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.3rem;
+    color: var(--correct);
+  }
+  .rank-score-label { font-size: 0.72rem; color: var(--text2); }
+  .rank-bar-wrap { width: 100%; margin-top: 8px; }
+  .rank-bar-bg { background: var(--surface2); border-radius: 99px; height: 4px; overflow: hidden; }
+  .rank-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--correct), #7dffd4); }
+
+  /* ── MODULE BREAKDOWN MODAL ── */
+  .breakdown-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+  .breakdown-row {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 10px 14px;
+  }
+  .breakdown-mod {
+    font-size: 0.78rem; font-weight: 700; color: var(--accent);
+    min-width: 80px; font-family: 'Syne', sans-serif;
+  }
+  .breakdown-bar-bg { flex: 1; background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
+  .breakdown-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), #7ba4ff); }
+  .breakdown-nums { font-size: 0.78rem; color: var(--text2); min-width: 60px; text-align: right; }
+
+  /* ── CURRENT USER CHIP ── */
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 99px; padding: 5px 12px 5px 6px;
+    cursor: pointer; transition: all 0.2s; font-size: 0.83rem;
+  }
+  .user-chip:hover { border-color: var(--accent); }
+  .user-chip-avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #7ba4ff);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 800; color: #fff;
+    font-family: 'Syne', sans-serif;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header { padding: 14px 18px; }
+    .screen { padding: 20px 14px; }
+    .question-card { padding: 20px 16px; }
+    .result-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .flashcard { height: 320px; }
+    .modal { padding: 28px 20px; }
+    .rank-card { padding: 12px 14px; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-dot"></span>
+    Redes CISCO
+  </div>
+  <div class="header-right">
+    <div class="user-chip" id="userChip" onclick="openUserModal()" style="display:none">
+      <div class="user-chip-avatar" id="userChipAvatar"></div>
+      <span id="userChipName"></span>
+    </div>
+    <button class="theme-btn" onclick="showRanking()" title="Ranking" style="font-size:1.1rem">🏆</button>
+    <button class="theme-btn" id="themeBtn" title="Cambiar tema">🌙</button>
+  </div>
+</header>
+
+<!-- USER LOGIN MODAL -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal">
+    <div class="modal-icon">👤</div>
+    <div class="modal-title">¿Quién está estudiando?</div>
+    <div class="modal-sub">Seleccioná tu usuario o creá uno nuevo para guardar tu progreso en el ranking.</div>
+    <div class="user-list" id="userList"></div>
+    <div class="divider-or">o ingresá un nombre nuevo</div>
+    <div class="input-row">
+      <input class="text-input" id="newUserInput" type="text" placeholder="Tu nombre..." maxlength="20" onkeydown="if(event.key==='Enter') createUser()">
+      <button class="btn btn-primary" onclick="createUser()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- BREAKDOWN MODAL -->
+<div class="modal-overlay" id="breakdownModal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="max-width:500px; text-align:left">
+    <div id="breakdownContent"></div>
+    <button class="btn btn-secondary" style="width:100%;margin-top:8px;justify-content:center" onclick="document.getElementById('breakdownModal').style.display='none'">Cerrar</button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title" id="confirmTitle"></div>
+    <div class="modal-sub" id="confirmSub"></div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-secondary" onclick="document.getElementById('confirmModal').style.display='none'">Cancelar</button>
+      <button class="btn" id="confirmOkBtn"></button>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-badge">Cisco Networking Academy</div>
+  <h1 class="home-title">Guía de<br><span>Estudio</span></h1>
+  <p class="home-sub">Practicá con preguntas extraídas directamente del material de cursada. Elegí un modo para comenzar.</p>
+  <div class="mode-cards">
+    <div class="mode-card" onclick="startMode('quiz')">
+      <div class="mode-icon">🧠</div>
+      <div class="mode-title">Multiple Choice</div>
+      <div class="mode-desc">Respondé preguntas con 4 opciones. Recibís feedback inmediato y justificación de cada respuesta.</div>
+    </div>
+    <div class="mode-card flash" onclick="startMode('flash')">
+      <div class="mode-icon">⚡</div>
+      <div class="mode-title">Flashcards</div>
+      <div class="mode-desc">Girá las tarjetas para ver la respuesta. Ideal para repasar conceptos rápidamente.</div>
+    </div>
+  </div>
+  <div class="stats-bar" id="homeStats"></div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div class="screen" id="quizScreen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="goHome()">← Inicio</button>
+    <div class="screen-title">Multiple Choice</div>
+    <div id="repassoBadge" style="display:none" class="repaso-badge">🔁 Modo Repaso</div>
+  </div>
+
+  <div class="filter-wrap" id="quizFilter"></div>
+
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span id="progText">Pregunta 1 de 30</span>
+      <span id="progPct">0%</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progFill" style="width:0%"></div></div>
+    <div class="score-chips">
+      <span class="chip chip-green" id="chipCorrect">✓ 0 correctas</span>
+      <span class="chip chip-red" id="chipWrong">✗ 0 incorrectas</span>
+      <span class="chip chip-blue" id="chipRemaining">⬦ 0 restantes</span>
+    </div>
+  </div>
+
+  <div id="quizContent"></div>
+
+  <div class="btn-row" id="quizBtnRow">
+    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente →</button>
+    <button class="btn btn-secondary" onclick="skipQuestion()">Saltar</button>
+  </div>
+</div>
+
+<!-- FLASH SCREEN -->
+<div class="screen" id="flashScreen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="goHome()">← Inicio</button>
+    <div class="screen-title">Flashcards</div>
+  </div>
+
+  <div class="filter-wrap" id="flashFilter"></div>
+
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span id="flashProgText">1 de 30</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="flashProgFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="flashcard-wrap">
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="card-face card-front" id="cardFront">
+        <div class="card-hint">📖 Clic para ver respuesta</div>
+        <div class="q-module" id="cardModule"></div>
+        <div class="card-question" id="cardQuestion"></div>
+      </div>
+      <div class="card-face card-back" id="cardBack">
+        <div class="card-hint">✅ Respuesta</div>
+        <div class="card-answer" id="cardAnswer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flash-controls">
+    <button class="btn btn-secondary" onclick="flashPrev()">← Anterior</button>
+    <span class="flash-counter" id="flashCounter">1 / 30</span>
+    <button class="btn btn-secondary" onclick="flashNext()">Siguiente →</button>
+  </div>
+  <div class="btn-row" style="justify-content:center">
+    <button class="btn btn-primary" onclick="shuffleFlash()">🔀 Mezclar</button>
+    <button class="btn btn-secondary" onclick="resetFlash()">↺ Reiniciar</button>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="screen" id="resultScreen">
+  <div class="result-screen">
+    <div class="result-emoji" id="resultEmoji">🎉</div>
+    <div class="result-title" id="resultTitle">¡Completado!</div>
+    <div class="result-score" id="resultSub"></div>
+    <div class="result-grid">
+      <div class="result-box"><div class="result-box-num" id="rCorrect" style="color:var(--correct)">0</div><div class="result-box-label">Correctas</div></div>
+      <div class="result-box"><div class="result-box-num" id="rWrong" style="color:var(--wrong)">0</div><div class="result-box-label">Incorrectas</div></div>
+      <div class="result-box"><div class="result-box-num" id="rPct" style="color:var(--accent)">0%</div><div class="result-box-label">Puntaje</div></div>
+    </div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn btn-primary" onclick="startMode('quiz')">🔄 Volver a intentar</button>
+      <button class="btn btn-danger" id="repasoBtn" onclick="startRepaso()">🔁 Repasar errores</button>
+      <button class="btn btn-secondary" onclick="goHome()">🏠 Inicio</button>
+    </div>
+  </div>
+</div>
+
+<!-- RANKING SCREEN -->
+<div class="screen" id="rankingScreen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="goHome()">← Inicio</button>
+    <div class="screen-title">🏆 Ranking</div>
+  </div>
+  <div id="rankingList" class="ranking-list"></div>
+  <div class="btn-row" style="justify-content:center">
+    <button class="btn btn-secondary" onclick="openUserModal()">Cambiar usuario</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// BANCO DE PREGUNTAS — extraídas del documento
+// ════════════════════════════════════════════════════════
+const ALL_QUESTIONS = [
+  // ── MÓDULO 1.2.6
+  { module: "1.2.6", q: "¿Cuál es el nombre que se le da a todas las computadoras conectadas a una red que participan directamente en la comunicación de red?", correct: "Hosts", wrong: ["Nodos intermediarios","Servidores de red","Clientes pasivos"], explanation: "Los dispositivos finales conectados a una red que participan activamente en la comunicación se llaman Hosts. Incluyen computadoras, servidores, impresoras y otros dispositivos que inician, envían o reciben datos en la red." },
+  { module: "1.2.6", q: "Cuando los datos se codifican como pulsos de luz, ¿qué tipo de medios se utilizan para transmitir los datos?", correct: "Cable de fibra óptica", wrong: ["Cable UTP","Cable coaxial","Cable STP"], explanation: "Cuando los datos se codifican en forma de pulsos de luz, se utiliza cable de fibra óptica. Transmite información mediante impulsos de luz a través de hilos de vidrio o plástico, permitiendo transmisiones de alta velocidad a largas distancias." },
+  { module: "1.2.6", q: "¿Cuáles son dos dispositivos que funcionan como dispositivos intermediarios en una red?", correct: "Routers y switches", wrong: ["Computadoras y servidores","Impresoras y escáneres","Hubs y cables"], explanation: "Los dispositivos intermediarios principales son los routers y switches. El router conecta diferentes redes basándose en direcciones IP; el switch conecta dispositivos dentro de la misma red usando direcciones MAC." },
+
+  // ── MÓDULO 1.3.3
+  { module: "1.3.3", q: "¿Qué conexión conecta físicamente el dispositivo final a la red?", correct: "NIC (Tarjeta de Interfaz de Red)", wrong: ["Cable de consola","Puerto de administración","Dirección IP"], explanation: "La NIC (Tarjeta de Interfaz de Red) proporciona la interfaz física necesaria para que el dispositivo se comunique en la red." },
+  { module: "1.3.3", q: "¿Qué conexiones son puertos especializados en un dispositivo de red que se conectan a redes individuales?", correct: "Interfaces", wrong: ["Puertos de consola","Buses internos","Slots de expansión"], explanation: "Los puertos especializados en un dispositivo de red que conectan a diferentes redes se denominan interfaces. Permiten que el dispositivo intermediario conecte múltiples redes." },
+  { module: "1.3.3", q: "¿Qué tipo de topología de red permite ver qué dispositivos finales están conectados a qué dispositivos intermediarios y qué medios se utilizan?", correct: "Topología lógica", wrong: ["Topología física","Topología en malla","Topología de bus"], explanation: "La topología lógica permite visualizar cómo se comunican los dispositivos entre sí, mostrando las conexiones lógicas más allá de la disposición física e indicando cómo fluye la información." },
+  { module: "1.3.3", q: "¿Qué tipo de topología muestra la ubicación real de los dispositivos y la instalación de cables?", correct: "Topología física", wrong: ["Topología lógica","Topología jerárquica","Topología de red virtual"], explanation: "La topología física muestra la distribución real y espacial de todos los dispositivos en la red, así como la disposición física del cableado." },
+
+  // ── MÓDULO 1.4.5
+  { module: "1.4.5", q: "¿Qué infraestructura de red proporciona acceso a usuarios y dispositivos en un área geográfica pequeña?", correct: "LAN (Red de Área Local)", wrong: ["WAN","MAN","Extranet"], explanation: "La LAN proporciona acceso a usuarios y dispositivos en áreas geográficamente pequeñas como un departamento, piso o pequeño edificio. Es la red más común en oficinas y hogares." },
+  { module: "1.4.5", q: "¿Qué infraestructura de red podría usar una organización para proporcionar acceso seguro a personas de otra organización que requieren acceso a los datos?", correct: "Extranet", wrong: ["Intranet","Internet pública","VPN interna"], explanation: "Una Extranet permite que una organización proporcione acceso controlado y seguro a usuarios externos de otras organizaciones, funcionando como red privada extendida a socios o clientes." },
+  { module: "1.4.5", q: "¿Qué infraestructura de red proporciona acceso a otras redes en un área geográfica grande, generalmente administrada por un proveedor de telecomunicaciones?", correct: "WAN (Red de Área Amplia)", wrong: ["LAN","MAN","Extranet"], explanation: "La WAN proporciona conectividad entre múltiples redes a través de grandes distancias geográficas y generalmente es propiedad y está administrada por proveedores de servicios de telecomunicaciones." },
+
+  // ── MÓDULO 1.6.6
+  { module: "1.6.6", q: "¿Cuáles son las cuatro características básicas de una arquitectura de red confiable?", correct: "Tolerancia a fallos, Seguridad, Escalabilidad y QoS", wrong: ["Velocidad, Seguridad, Costo y Redundancia","Ancho de banda, Latencia, Fiabilidad y Costo","Disponibilidad, Rendimiento, Compatibilidad y Seguridad"], explanation: "Las cuatro características fundamentales son: Tolerancia a fallos (redundancia), Seguridad (protección de datos), Escalabilidad (capacidad de crecimiento) y QoS (Calidad de Servicio)." },
+  { module: "1.6.6", q: "¿Cuáles tres conceptos son requisitos de la Seguridad en una red?", correct: "Confidencialidad, Integridad y Disponibilidad", wrong: ["Velocidad, Seguridad y Escalabilidad","Autenticación, Redundancia y Cifrado","Tolerancia, Rendimiento y Acceso"], explanation: "Los tres pilares de la seguridad en redes son: Confidencialidad (proteger datos de acceso no autorizado), Integridad (asegurar que los datos no sean alterados) y Disponibilidad (garantizar acceso al servicio)." },
+  { module: "1.6.6", q: "¿Con qué tipo de política un router puede gestionar el flujo de datos y dar prioridad a ciertos tipos de tráfico si hay congestión?", correct: "Política de QoS (Calidad de Servicio)", wrong: ["Política de seguridad firewall","Política de enrutamiento estático","Política de acceso remoto"], explanation: "Mediante una política de QoS, un router puede gestionar y priorizar el flujo de datos, asignando mayor ancho de banda a aplicaciones críticas como videollamadas si la red experimenta congestión." },
+  { module: "1.6.6", q: "El hecho de que haya varias rutas hacia un destino se llama redundancia. ¿Cuál característica de la arquitectura de red representa esto?", correct: "Tolerancia a fallos", wrong: ["Escalabilidad","QoS","Seguridad"], explanation: "La existencia de múltiples rutas es un ejemplo de Tolerancia a fallos. Garantiza que si una ruta falla, el tráfico puede desviarse por rutas alternativas, manteniendo la conectividad." },
+
+  // ── MÓDULO 1.7
+  { module: "1.7", q: "¿Qué característica describe el uso de herramientas personales para acceder a la información y comunicarse a través de una red empresarial?", correct: "BYOD (Bring Your Own Device)", wrong: ["Computación en la nube","Banda ancha inalámbrica","Hogar inteligente"], explanation: "El BYOD (Bring Your Own Device) describe la práctica de que empleados usen sus dispositivos personales (laptops, teléfonos, tablets) para acceder a la red corporativa y realizar trabajo remoto." },
+  { module: "1.7", q: "¿Qué característica contiene opciones como Público, Privado, Personalizado e Híbrido?", correct: "Computación en la nube", wrong: ["BYOD","VPN empresarial","Banda ancha inalámbrica"], explanation: "La Computación en la nube ofrece diferentes modelos: Público (acceso abierto), Privado (solo para una organización), Personalizado (adaptado a necesidades específicas) e Híbrido (combinación)." },
+  { module: "1.7", q: "¿Qué función usa la misma tecnología celular que un teléfono inteligente?", correct: "Banda ancha inalámbrica", wrong: ["Computación en la nube","BYOD","Hogar inteligente"], explanation: "La Banda ancha inalámbrica usa la misma tecnología celular que un teléfono inteligente, permitiendo acceso a Internet mediante redes móviles sin necesidad de cables." },
+
+  // ── MÓDULO 1.8
+  { module: "1.8", q: "¿Qué ataque ralentiza o bloquea equipos y programas?", correct: "Ataque de Denegación de Servicio (DoS)", wrong: ["Ataque de Zero-day","Malware","Phishing"], explanation: "Un ataque DoS ralentiza o bloquea equipos y servicios saturando el sistema con solicitudes maliciosas, impidiendo que usuarios legítimos accedan al servicio." },
+  { module: "1.8", q: "¿Qué opción crea una conexión segura para trabajadores remotos?", correct: "VPN (Red Privada Virtual)", wrong: ["Firewall","Antivirus","Proxy"], explanation: "Una VPN crea una conexión segura para trabajadores remotos, estableciendo un túnel cifrado que permite acceder de forma segura a la red corporativa desde ubicaciones remotas." },
+  { module: "1.8", q: "¿Qué opción bloquea el acceso no autorizado a su red?", correct: "Firewall", wrong: ["VPN","Antivirus","IDS (Sistema de Detección de Intrusos)"], explanation: "Un Firewall bloquea el acceso no autorizado a la red, controlando el tráfico entrante y saliente según reglas de seguridad predefinidas." },
+  { module: "1.8", q: "¿Qué opción describe un ataque que ocurre el primer día que se conoce una vulnerabilidad?", correct: "Ataque de Zero-day (Día Cero)", wrong: ["Ataque DoS","Malware","Phishing"], explanation: "Un ataque Zero-day ocurre el primer día que se descubre una vulnerabilidad. Es particularmente peligroso porque no hay parches disponibles para proteger los sistemas." },
+  { module: "1.8", q: "¿Qué opción describe el código malicioso que se ejecuta en dispositivos de usuario?", correct: "Malware (virus, gusano o caballo de Troya)", wrong: ["Firewall","Ataque DoS","Zero-day"], explanation: "El Malware es código malicioso que se ejecuta en dispositivos de usuario, infecta sistemas y compromete su funcionamiento, robando información o causando daños." },
+
+  // ── MÓDULO 2.1
+  { module: "2.1", q: "¿Qué método de acceso sería más apropiado si estuviera en la sala de equipos con un nuevo switch que necesita configuración inicial?", correct: "Acceso mediante Consola", wrong: ["SSH","Telnet","Acceso inalámbrico"], explanation: "El acceso mediante Consola es el método más apropiado para configuración inicial de un switch. Utiliza un cable serial directo y no requiere configuración previa de red." },
+  { module: "2.1", q: "¿Qué método de acceso es el más apropiado para acceder al IOS a través de una conexión de red?", correct: "Telnet o SSH", wrong: ["Cable de consola","AUX port","Acceso físico directo"], explanation: "El acceso mediante Telnet o SSH es el más apropiado para acceso remoto a través de la red. SSH es preferible por ser cifrado; Telnet es inseguro porque transmite datos en texto plano." },
+
+  // ── MÓDULO 2.2
+  { module: "2.2", q: "¿Qué modo de IOS permite el acceso a todos los comandos y funciones del dispositivo?", correct: "Modo EXEC Privilegiado", wrong: ["Modo EXEC de Usuario","Modo de Configuración de Interfaz","Modo de Configuración de Línea"], explanation: "El Modo EXEC Privilegiado permite acceso a todos los comandos y funciones. Se identifica por el símbolo '#' y permite configuración y administración completa del dispositivo." },
+  { module: "2.2", q: "¿En qué modo se encuentra si aparece el indicador Switch(config)#?", correct: "Modo de Configuración Global", wrong: ["Modo EXEC Privilegiado","Modo EXEC de Usuario","Modo de Configuración de Interfaz"], explanation: "Switch(config)# indica que está en el Modo de Configuración Global, donde se configuran parámetros a nivel de todo el dispositivo." },
+  { module: "2.2", q: "¿En qué modo se encuentra si aparece el símbolo Switch>?", correct: "Modo EXEC de Usuario", wrong: ["Modo EXEC Privilegiado","Modo de Configuración Global","Modo de Configuración de Interfaz"], explanation: "El símbolo '>' indica el Modo EXEC de Usuario, que tiene acceso limitado y solo permite comandos de visualización y diagnóstico básicos." },
+  { module: "2.2", q: "¿Qué dos comandos lo devuelven al Modo EXEC Privilegiado independientemente de dónde esté?", correct: "end y Ctrl+Z", wrong: ["exit y quit","logout y end","disable y Ctrl+C"], explanation: "Los comandos 'end' y 'Ctrl+Z' salen del modo de configuración y lo devuelven al Modo EXEC Privilegiado desde cualquier submodo." },
+
+  // ── MÓDULO 2.4
+  { module: "2.4", q: "¿Cuál es el comando para asignar el nombre 'Sw-Floor-2' a un switch?", correct: "hostname Sw-Floor-2", wrong: ["set name Sw-Floor-2","device-name Sw-Floor-2","name Sw-Floor-2"], explanation: "El comando 'hostname Sw-Floor-2' se ejecuta en modo de configuración global y asigna el nombre del dispositivo que aparecerá en el prompt." },
+  { module: "2.4", q: "¿Cómo se asegura el acceso al Modo EXEC Privilegiado?", correct: "enable secret [contraseña]", wrong: ["password enable [contraseña]","secure exec [contraseña]","console password [contraseña]"], explanation: "El comando 'enable secret' cifra la contraseña para acceso privilegiado, protegiéndola en la configuración del dispositivo." },
+  { module: "2.4", q: "¿Qué comando encripta todas las contraseñas en texto plano en la configuración?", correct: "service password-encryption", wrong: ["encrypt all passwords","password-protect all","security encrypt passwords"], explanation: "El comando 'service password-encryption' cifra automáticamente todas las contraseñas almacenadas en la configuración para mayor seguridad." },
+  { module: "2.4", q: "¿Cuál es el comando para configurar un banner que se moestra al conectarse?", correct: "banner motd $ [mensaje] $", wrong: ["set banner [mensaje]","display message [mensaje]","login message [mensaje]"], explanation: "El comando 'banner motd' muestra un Mensaje del Día que aparece cuando alguien intenta conectarse al dispositivo. El delimitador puede variar." },
+
+  // ── MÓDULO 2.6
+  { module: "2.6", q: "¿Cuál es la estructura de una dirección IPv4 llamada?", correct: "Formato Decimal Punteado", wrong: ["Formato Hexadecimal","Formato Binario","Formato Octetal"], explanation: "Se llama Formato Decimal Punteado. Se expresa como cuatro números decimales separados por puntos, donde cada número va de 0 a 255 (ej: 192.168.1.1)." },
+  { module: "2.6", q: "¿Qué tipo de interfaz no tiene ningún puerto físico asociado?", correct: "Interfaz Virtual de Switch (SVI)", wrong: ["Interfaz FastEthernet","Interfaz GigabitEthernet","Interfaz serial"], explanation: "La SVI no tiene ningún puerto físico asociado. Es una interfaz lógica creada en software del switch para administración y comunicación entre VLANs." },
+
+  // ── MÓDULO 2.9
+  { module: "2.9", q: "¿Qué tipo de acceso está asegurado con el comando 'enable secret'?", correct: "Acceso al Modo EXEC Privilegiado", wrong: ["Acceso al Modo EXEC de Usuario","Acceso a líneas VTY","Acceso a la consola"], explanation: "El comando 'enable secret' asegura el acceso al Modo EXEC Privilegiado, estableciendo una contraseña cifrada que protege el acceso administrativo completo." },
+  { module: "2.9", q: "¿Cuál es la Interfaz Virtual de Switch (SVI) predeterminada en un switch Cisco?", correct: "VLAN 1", wrong: ["VLAN 10","VLAN 100","VLAN 0"], explanation: "La SVI predeterminada es VLAN 1. Es la interfaz virtual estándar mediante la cual se administra el switch." },
+  { module: "2.9", q: "¿Qué ubicación de memoria pierde todo su contenido cuando se reinicia el dispositivo?", correct: "RAM (Memoria de Acceso Aleatorio)", wrong: ["NVRAM","Flash","ROM"], explanation: "La RAM pierde todo su contenido al reiniciar. Es memoria volátil que requiere alimentación continua para retener datos." },
+  { module: "2.9", q: "¿Qué ubicación de memoria almacena el archivo de configuración de inicio?", correct: "NVRAM (Memoria de Acceso Aleatorio No Volátil)", wrong: ["RAM","Flash","ROM"], explanation: "La NVRAM almacena el archivo de configuración de inicio. Esta memoria retiene los datos incluso cuando el dispositivo está apagado." },
+  { module: "2.9", q: "¿A qué subred pertenece la dirección IP 10.1.100.50 con máscara 255.255.0.0?", correct: "Subred 10.0.0.0 (/16)", wrong: ["Subred 10.1.0.0 (/24)","Subred 10.1.100.0 (/24)","Subred 10.255.0.0 (/8)"], explanation: "La máscara /16 indica que los primeros 16 bits definen la red. Por lo tanto la dirección pertenece a la subred 10.0.0.0 (rango 10.0.0.0 a 10.255.255.255)." },
+  { module: "2.9", q: "¿Por qué un técnico ingresaría el comando 'copy startup-config running-config'?", correct: "Para restaurar la configuración guardada en la configuración en ejecución", wrong: ["Para guardar la configuración actual","Para borrar la configuración","Para hacer backup en NVRAM"], explanation: "Este comando restaura la configuración guardada de inicio en la configuración en ejecución, recuperando la última configuración guardada si hay cambios no deseados." },
+
+  // ── MÓDULO 3.1
+  { module: "3.1", q: "¿Cuál es el proceso de convertir la información en la forma adecuada para la transmisión?", correct: "Codificación", wrong: ["Encapsulamiento","Segmentación","Multiplexación"], explanation: "La Codificación convierte datos en un formato que puede transmitirse físicamente a través del medio de comunicación." },
+  { module: "3.1", q: "¿Qué paso del proceso de comunicación se ocupa de identificar las direcciones del remitente y destinatario?", correct: "Encapsulamiento", wrong: ["Codificación","Segmentación","Decodificación"], explanation: "El Encapsulamiento agrega información de dirección (como direcciones MAC e IP) en cada capa del modelo OSI a medida que los datos bajan por las capas." },
+  { module: "3.1", q: "¿Qué método de entrega se utiliza para transmitir información a uno o más dispositivos, pero no a todos?", correct: "Multidifusión (Multicast)", wrong: ["Difusión (Broadcast)","Unicast","Anycast"], explanation: "La Multidifusión envía datos a un grupo específico de dispositivos seleccionados, no a toda la red." },
+
+  // ── MÓDULO 3.2
+  { module: "3.2", q: "¿Qué tipo de protocolo son BGP y OSPF?", correct: "Protocolos de enrutamiento dinámico", wrong: ["Protocolos de descubrimiento de servicios","Protocolos de transporte","Protocolos de capa de aplicación"], explanation: "BGP y OSPF son protocolos de enrutamiento dinámico que gestionan automáticamente el descubrimiento de rutas y la comunicación entre redes." },
+  { module: "3.2", q: "¿Cuáles dos son protocolos de descubrimiento de servicios?", correct: "DHCP y DNS", wrong: ["TCP y UDP","HTTP y FTP","BGP y OSPF"], explanation: "DHCP y DNS son protocolos de descubrimiento de servicios. DHCP asigna direcciones IP automáticamente y DNS traduce nombres de dominio a direcciones IP." },
+  { module: "3.2", q: "¿Cuál protocolo es responsable de garantizar la entrega fiable?", correct: "TCP (Protocolo de Control de Transmisión)", wrong: ["UDP","ICMP","IP"], explanation: "TCP garantiza la entrega fiable mediante confirmaciones (ACK) para asegurar que todos los datos lleguen sin pérdidas." },
+
+  // ── MÓDULO 3.3
+  { module: "3.3", q: "¿A qué capa del modelo TCP/IP pertenecen UDP y TCP?", correct: "Capa de Transporte (Capa 4)", wrong: ["Capa de Aplicación","Capa de Internet","Capa de Acceso a la Red"], explanation: "UDP y TCP pertenecen a la capa de Transporte (Capa 4). Ambos gestionan la entrega de datos entre aplicaciones." },
+  { module: "3.3", q: "¿Cuáles protocolos proporcionan comentarios del host destino respecto a errores?", correct: "ICMPv4 e ICMPv6", wrong: ["TCP y UDP","HTTP y FTP","BGP y OSPF"], explanation: "ICMPv4 e ICMPv6 proporcionan comentarios sobre errores de entrega, utilizados para reportar problemas como destinos inalcanzables o tiempos excedidos." },
+
+  // ── MÓDULO 3.4
+  { module: "3.4", q: "¿Qué organización se ocupa de los documentos RFC que especifican nuevos protocolos?", correct: "IETF (Grupo de Trabajo de Ingeniería de Internet)", wrong: ["IEEE","ISO","IANA"], explanation: "La IETF se ocupa de los RFC (Request for Comments). Define y actualiza estándares de protocolos de Internet." },
+  { module: "3.4", q: "¿Qué organización controla la asignación de direcciones IP y nombres de dominio?", correct: "IANA (Autoridad de Números Asignados de Internet)", wrong: ["IETF","IEEE","ISO"], explanation: "La IANA controla la asignación de direcciones IP, administración de nombres de dominio e identificadores de protocolo a nivel mundial." },
+  { module: "3.4", q: "¿Qué tipos de estándares están desarrollados por Electronics Industries Alliance (EIA)?", correct: "Estándares para cableado eléctrico y conectores", wrong: ["Estándares de protocolos de Internet","Estándares de enrutamiento","Estándares de seguridad informática"], explanation: "EIA desarrolla estándares para cableado eléctrico y conectores, definiendo especificaciones técnicas para cables, conectores y sistemas de cableado estructurado." },
+
+  // ── MÓDULO 3.6
+  { module: "3.6", q: "¿Cuál es el proceso de dividir un flujo de datos grande en trozos pequeños?", correct: "Segmentación", wrong: ["Encapsulamiento","Codificación","Multiplexación"], explanation: "La Segmentación divide datos grandes en unidades manejables para transmisión eficiente a través de la red." },
+  { module: "3.6", q: "¿Cuál es la PDU asociada a la capa de transporte?", correct: "Segmento", wrong: ["Paquete","Trama","Bit"], explanation: "El Segmento es la PDU de la capa de Transporte (Capa 4), que contiene información de puertos y secuenciación." },
+  { module: "3.6", q: "¿Qué capa de protocolo encapsula los datos en tramas?", correct: "Capa de Enlace de Datos (Capa 2)", wrong: ["Capa Física (Capa 1)","Capa de Red (Capa 3)","Capa de Transporte (Capa 4)"], explanation: "La capa de Enlace de Datos encapsula los datos en tramas, preparando los datos para transmisión física agregando direcciones MAC." },
+  { module: "3.6", q: "¿Cuál es el nombre del proceso de agregar información de protocolo mientras baja la pila?", correct: "Encapsulamiento", wrong: ["Codificación","Segmentación","Decodificación"], explanation: "El Encapsulamiento es el proceso donde cada capa agrega su propio encabezado a los datos conforme descienden por el modelo OSI." },
+
+  // ── MÓDULO 3.7
+  { module: "3.7", q: "¿Qué se utiliza para determinar las porciones de red y host en una dirección IPv4?", correct: "La máscara de subred", wrong: ["La dirección MAC","La dirección IP de gateway","El protocolo DHCP"], explanation: "La máscara de subred determina qué bits pertenecen a la red y cuáles al host, definiendo la división entre la porción de red y la porción de host." },
+  { module: "3.7", q: "¿La parte más derecha de una dirección IP identifica la red? Verdadero o falso.", correct: "Falso — la parte izquierda identifica la red", wrong: ["Verdadero — la parte derecha identifica la red","Verdadero — ambas partes identifican la red","Falso — ninguna parte identifica la red"], explanation: "Falso. La parte más izquierda de la dirección (según la máscara de subred) identifica la red, mientras que la parte derecha identifica el host dentro de esa red." },
+  { module: "3.7", q: "¿Las direcciones de vínculo de datos son físicas y nunca cambian en el marco de origen a destino?", correct: "Falso — cambian en cada salto de router", wrong: ["Verdadero — son permanentes","Verdadero — solo cambian con el proveedor","Falso — no existen en la trama"], explanation: "Falso. Las direcciones MAC son físicas pero sí cambian en cada salto. Cuando un paquete pasa por un router, se reescriben las direcciones MAC con las del nuevo segmento." },
+
+  // ── MÓDULO 3.8
+  { module: "3.8", q: "¿En qué tipo de comunicación se envía un mensaje a todos los dispositivos de una red local?", correct: "Difusión (Broadcast)", wrong: ["Multidifusión (Multicast)","Unicast","Anycast"], explanation: "La Difusión (Broadcast) envía a todos los dispositivos conectados en la red local simultáneamente." },
+  { module: "3.8", q: "¿Cuál es el propósito de la codificación de mensajes?", correct: "Convertir la información a la forma adecuada para transmisión", wrong: ["Comprimir los datos para mayor velocidad","Cifrar los datos para mayor seguridad","Segmentar los datos en paquetes"], explanation: "La codificación convierte datos en señales que pueden viajar físicamente a través del medio, transformando la información a la forma adecuada para transmisión." },
+  { module: "3.8", q: "¿Cuál es el término general para una pieza de datos en cualquier capa del modelo?", correct: "PDU (Unidad de Datos del Protocolo)", wrong: ["Paquete","Trama","Segmento"], explanation: "La PDU es el término general para una pieza de datos en cualquier capa. Cada capa tiene su propia PDU: datos, segmento, paquete, trama, bits." },
+  { module: "3.8", q: "¿Qué proceso convierte datos transmitidos en un mensaje legible?", correct: "Decodificación", wrong: ["Encapsulamiento","Segmentación","Compresión"], explanation: "La Decodificación revierte el proceso de codificación para que el dispositivo receptor pueda entender e interpretar los datos." },
+  { module: "3.8", q: "¿Cuál es el proceso de colocar un mensaje dentro de otro para transferirlo?", correct: "Encapsulamiento", wrong: ["Decodificación","Segmentación","Codificación"], explanation: "El Encapsulamiento es el proceso donde cada capa del modelo OSI envuelve el mensaje anterior con su propio encabezado a medida que baja por las capas." },
+
+  // ── MÓDULO 4.1
+  { module: "4.1", q: "¿Cuándo se codifica una trama, todos los bits se envían simultáneamente? Verdadero o falso.", correct: "Falso — los bits se envían secuencialmente", wrong: ["Verdadero — se envían todos a la vez","Verdadero — en modo paralelo","Falso — se envían en grupos de 8 bits"], explanation: "Falso. Los bits se envían secuencialmente uno tras otro a través del medio, no todos al mismo tiempo." },
+  { module: "4.1", q: "¿Qué PDU recibe la capa física para codificación y transmisión?", correct: "La Trama (de la capa de enlace de datos)", wrong: ["El Segmento","El Paquete","Los Bits"], explanation: "La capa física recibe la Trama de la capa de enlace de datos. Esta es la unidad de datos que se codifica en señales para transmisión." },
+
+  // ── MÓDULO 4.2
+  { module: "4.2", q: "¿Qué medios utilizan patrones de microondas para representar bits?", correct: "Medios inalámbricos", wrong: ["Cable de cobre","Fibra óptica","Cable coaxial"], explanation: "Los medios inalámbricos utilizan patrones de microondas y ondas de radio para transmitir datos sin necesidad de cables físicos." },
+  { module: "4.2", q: "¿Qué medios utilizan patrones de luz para representar bits?", correct: "Fibra óptica", wrong: ["Cable de cobre UTP","Medios inalámbricos","Cable coaxial"], explanation: "La fibra óptica utiliza patrones de luz. Los datos se transmiten como impulsos de luz a través de hilos de vidrio." },
+  { module: "4.2", q: "¿Qué medios usan pulsos eléctricos para representar bits?", correct: "Cable de cobre", wrong: ["Fibra óptica","Medios inalámbricos","Cable de fibra multimodo"], explanation: "El cobre utiliza pulsos eléctricos para representar bits. Los datos se transmiten como voltajes que cambian rápidamente a través del cable." },
+  { module: "4.2", q: "¿Cuál es el nombre de la capacidad de un medio para transportar datos?", correct: "Ancho de banda", wrong: ["Rendimiento (throughput)","Latencia","Velocidad de transmisión"], explanation: "El ancho de banda representa la capacidad máxima teórica de transmisión de datos que soporta un medio." },
+  { module: "4.2", q: "¿Cuál es una medida de la transferencia actual de bits?", correct: "Rendimiento (throughput)", wrong: ["Ancho de banda","Latencia","Velocidad nominal"], explanation: "El rendimiento mide la velocidad real de transferencia de datos, que generalmente es menor que el ancho de banda teórico." },
+
+  // ── MÓDULO 4.3
+  { module: "4.3", q: "¿Cuál contrarresta EMI y RFI usando blindaje?", correct: "STP (Cable de Par Trenzado Blindado)", wrong: ["UTP (Cable sin blindaje)","Cable coaxial","Fibra óptica"], explanation: "El STP contrarresta interferencia electromagnética (EMI) y de radiofrecuencia (RFI) mediante pantallas protectoras especiales." },
+  { module: "4.3", q: "¿Cuál es el medio de red más común?", correct: "UTP (Cable de Par Trenzado No Blindado)", wrong: ["STP (Cable blindado)","Cable coaxial","Fibra óptica"], explanation: "El UTP es el medio más común en redes modernas. Es económico, fácil de instalar y ampliamente utilizado." },
+  { module: "4.3", q: "¿Cuál termina con conectores BNC, tipo N y tipo F?", correct: "Cable coaxial", wrong: ["Cable UTP","Cable STP","Fibra óptica"], explanation: "El cable coaxial termina con conectores BNC, tipo N y tipo F. Se utiliza en aplicaciones específicas aunque cada vez menos." },
+
+  // ── MÓDULO 4.5
+  { module: "4.5", q: "¿Qué tipo de fibra óptica puede ayudar a datos a viajar aproximadamente 500 metros?", correct: "Fibra multimodo", wrong: ["Fibra monomodo","Fibra de plástico","Fibra de cristal líquido"], explanation: "La fibra multimodo permite transmisión hasta aproximadamente 500 metros, utilizando múltiples rutas de luz para distancias medianas." },
+  { module: "4.5", q: "¿Qué tipo de fibra usa diodos emisores de luz (LED)?", correct: "Fibra multimodo", wrong: ["Fibra monomodo","Fibra coaxial óptica","Fibra de cuarzo"], explanation: "La fibra multimodo utiliza LEDs como fuente de luz. Los LEDs son económicos pero menos precisos que los láseres." },
+  { module: "4.5", q: "¿Qué tipo de fibra usa láseres como transmisor?", correct: "Fibra monomodo", wrong: ["Fibra multimodo","Fibra de plástico","Fibra de vidrio estándar"], explanation: "La fibra monomodo utiliza láseres en una sola corriente de luz. Los láseres proporcionan transmisión de mayor distancia y calidad." },
+  { module: "4.5", q: "¿Qué tipo de fibra se utiliza para telefonía de larga distancia?", correct: "Fibra monomodo", wrong: ["Fibra multimodo","Cable UTP cat6","Cable coaxial HFC"], explanation: "La fibra monomodo se utiliza para larga distancia, siendo ideal para aplicaciones críticas de telecomunicaciones que requieren transmisión confiable a grandes distancias." },
+
+  // ── MÓDULO 4.6
+  { module: "4.6", q: "¿Las WLANs funcionan en dúplex completo? Verdadero o falso.", correct: "Falso — las WLANs funcionan en semidúplex", wrong: ["Verdadero — funcionan en full duplex","Verdadero — todos los dispositivos transmiten simultáneamente","Falso — no tienen modo dúplex"], explanation: "Falso. Las WLANs funcionan en semidúplex, lo que significa que solo pueden transmitir en una dirección a la vez, limitando la transmisión simultánea." },
+  { module: "4.6", q: "¿Cuál estándar inalámbrico es mejor para entornos industriales e IoT?", correct: "ZigBee", wrong: ["Wi-Fi (802.11)","Bluetooth","WiMAX"], explanation: "ZigBee es el estándar más adecuado para entornos industriales e IoT. Ofrece bajo consumo de energía y es ideal para dispositivos con batería." },
+  { module: "4.6", q: "¿Cuál estándar inalámbrico permite comunicación de 1 a 100 metros en redes PAN?", correct: "ZigBee", wrong: ["Wi-Fi (802.11)","WiMAX","Bluetooth"], explanation: "ZigBee es un estándar para redes personales inalámbricas (PAN) que permite comunicación entre dispositivos a distancias de 1 a 100 metros." },
+
+  // ── MÓDULO 4.7.4
+  { module: "4.7.4", q: "Un administrador observa que las señales generadas por la NIC del servidor están distorsionadas. ¿En qué capa del modelo OSI está categorizado el error?", correct: "Capa Física (Capa 1)", wrong: ["Capa de Enlace de Datos (Capa 2)","Capa de Red (Capa 3)","Capa de Presentación (Capa 6)"], explanation: "La Capa Física (Capa 1) es responsable de la transmisión de señales. Una señal distorsionada generada por la NIC representa un problema a ese nivel." },
+  { module: "4.7.4", q: "¿Qué tipo de cable se usa para conectar un puerto serie de la estación de trabajo al puerto de consola de un router Cisco?", correct: "Cable Rollover (cable de consola)", wrong: ["Cable Directo (Straight-through)","Cable Cruzado","Cable Coaxial"], explanation: "El cable Rollover invierte todos los pines entre sus extremos y es el estándar de Cisco para administrar routers y switches desde una PC." },
+  { module: "4.7.4", q: "¿Por qué se utilizan dos hilos de fibra para una sola conexión de fibra óptica?", correct: "Porque permiten conectividad dúplex completo", wrong: ["Para aumentar la velocidad de transmisión","Para mayor resistencia mecánica","Para reducir la atenuación de la señal"], explanation: "Los dos hilos permiten conectividad dúplex completo: un hilo transmite en una dirección y el otro en la dirección opuesta." },
+  { module: "4.7.4", q: "¿Qué procedimiento se utiliza para reducir el efecto de la diafonía en cables de cobre?", correct: "Trenzar pares de cables de circuito opuestos juntos", wrong: ["Aplicar blindaje metálico exterior","Aumentar el diámetro del conductor","Usar aislante de mayor grosor"], explanation: "El trenzado genera campos electromagnéticos que se cancelan entre sí, reduciendo la interferencia (diafonía) entre pares adyacentes." },
+  { module: "4.7.4", q: "¿Cuál es una ventaja de usar cables de fibra óptica en lugar de cables de cobre?", correct: "Es capaz de transportar señales mucho más lejos", wrong: ["Es más barato que el cableado de cobre","Es más fácil de instalar","Se puede doblar alrededor de curvas afiladas"], explanation: "La fibra experimenta muy poca atenuación y puede cubrir kilómetros sin necesidad de repetidores, a diferencia del cobre." },
+  { module: "4.7.4", q: "¿Qué tipo de cable UTP se utiliza para conectar una PC a un puerto de switch?", correct: "Cable Directo (Straight-through)", wrong: ["Cable Cruzado (Crossover)","Cable Rollover","Cable de consola"], explanation: "El cable Directo conecta dispositivos de diferente tipo (PC a switch) y tiene la misma configuración de pines en ambos extremos." },
+  { module: "4.7.4", q: "¿Cuál de las siguientes es una característica del cableado UTP?", correct: "Anulación (cancelación de interferencias por trenzado)", wrong: ["Blindaje metálico exterior","Inmunidad total a interferencias","Núcleo de fibra de vidrio"], explanation: "El trenzado de los pares hace que sus campos electromagnéticos opuestos se cancelen entre sí, reduciendo la diafonía sin necesidad de blindaje." },
+  { module: "4.7.4", q: "¿Cuál de las siguientes características describe el crosstalk?", correct: "La distorsión causada por señales que se transportan por hilos adyacentes", wrong: ["El debilitamiento de la señal por longitud del cable","La pérdida de señal inalámbrica por distancia","La distorsión causada por iluminación fluorescente"], explanation: "El crosstalk ocurre cuando el campo electromagnético de un cable induce una señal no deseada en un cable cercano, provocando interferencia." },
+  { module: "4.7.4", q: "¿Qué indica el término rendimiento (throughput)?", correct: "La medida de los bits transferidos por los medios durante un período determinado", wrong: ["La capacidad máxima teórica del medio","El tiempo de latencia de la red","La velocidad garantizada por el ISP"], explanation: "El rendimiento es la velocidad real de transferencia de datos, que puede verse afectada por latencia, tráfico y calidad del medio." },
+  { module: "4.7.4", q: "¿Qué organización de estándares supervisa el desarrollo de estándares LAN inalámbrica?", correct: "IEEE (Instituto de Ingenieros Eléctricos y Electrónicos)", wrong: ["IETF","IANA","ISO"], explanation: "El IEEE supervisa el desarrollo de los estándares de LAN inalámbrica. El estándar IEEE 802.11 define las especificaciones para redes Wi-Fi." },
+
+  // ── MÓDULO 5.1.4
+  { module: "5.1.4", q: "¿Cuál es el equivalente binario de la dirección IP 192.168.11.10?", correct: "11000000.10101000.00001011.00001010", wrong: ["11000000.10101000.00001010.00001011","10000000.10101000.00001011.00001010","11000000.10101000.00001011.00001100"], explanation: "Cada octeto se convierte independientemente: 192=11000000, 168=10101000, 11=00001011, 10=00001010." },
+  { module: "5.1.4", q: "¿Cuál es el equivalente binario de la dirección IP 172.16.31.30?", correct: "10101100.00010000.00011111.00011110", wrong: ["10101000.00010000.00011111.00011110","10101100.00010001.00011111.00011110","10101100.00010000.00011110.00011111"], explanation: "Conversión de cada octeto: 172=10101100, 16=00010000, 31=00011111, 30=00011110." },
+
+  // ── MÓDULO 5.2.5
+  { module: "5.2.5", q: "¿Cuál es el equivalente hexadecimal de 202?", correct: "CA", wrong: ["CB","BA","DA"], explanation: "202 en hexadecimal: C(12)×16 + A(10) = 192+10 = 202, por lo tanto CA." },
+  { module: "5.2.5", q: "¿Cuál es el equivalente hexadecimal de 254?", correct: "FE", wrong: ["FF","EF","FD"], explanation: "254 en hexadecimal: F(15)×16 + E(14) = 240+14 = 254, por lo tanto FE." },
+  { module: "5.2.5", q: "¿Cuál es el equivalente decimal de A9 (hexadecimal)?", correct: "169", wrong: ["179","159","189"], explanation: "A(10)×16 + 9 = 160+9 = 169." },
+  { module: "5.2.5", q: "¿Cuál es el equivalente decimal de 7D (hexadecimal)?", correct: "125", wrong: ["115","135","117"], explanation: "7×16 + D(13) = 112+13 = 125." },
+
+  // ── MÓDULO 5.3.2
+  { module: "5.3.2", q: "¿Cuántos bits tiene una dirección IPv6?", correct: "128 bits", wrong: ["32 bits","64 bits","256 bits"], explanation: "IPv6 utiliza direcciones de 128 bits, mucho más largas que IPv4 (32 bits), para permitir un mayor número de direcciones únicas." },
+  { module: "5.3.2", q: "¿Cuántos bits hay en una dirección IPv4?", correct: "32 bits", wrong: ["64 bits","128 bits","16 bits"], explanation: "Una dirección IPv4 tiene 32 bits, divididos en cuatro octetos de 8 bits cada uno (4×8=32)." },
+  { module: "5.3.2", q: "¿Cuál es la representación binaria de 173?", correct: "10101101", wrong: ["10101100","10101111","11001101"], explanation: "173 = 128+32+8+4+1 = 10101101 en binario." },
+  { module: "5.3.2", q: "¿Cuál es la representación binaria de 232?", correct: "11101000", wrong: ["11100000","11101100","11110000"], explanation: "232 = 128+64+32+8 = 11101000 en binario." },
+  { module: "5.3.2", q: "¿Cuál es el equivalente decimal de 10010101 (binario)?", correct: "149", wrong: ["139","159","145"], explanation: "128+16+4+1 = 149." },
+  { module: "5.3.2", q: "¿Cuál es la representación binaria de 0xCA?", correct: "11001010", wrong: ["11001100","11000010","11010010"], explanation: "C(12)=1100, A(10)=1010, resultado: 11001010." },
+  { module: "5.3.2", q: "¿Cuál es el equivalente decimal de 0xC9?", correct: "201", wrong: ["193","209","211"], explanation: "C(12)×16 + 9 = 192+9 = 201." },
+
+  // ── MÓDULO 6.1.5
+  { module: "6.1.5", q: "¿Cuál es otro nombre para la capa de enlace de datos OSI?", correct: "Capa 2", wrong: ["Capa 1 (Física)","Capa 3 (Red)","Capa 4 (Transporte)"], explanation: "La capa de enlace de datos es también conocida como Capa 2 del modelo OSI, encargada de la comunicación entre dispositivos en el mismo segmento." },
+  { module: "6.1.5", q: "¿Cuál es la responsabilidad de la subcapa MAC?", correct: "Proporcionar el método para obtener la trama dentro y fuera de los medios físicos", wrong: ["Comunicarse con las capas superiores de software","Asignar direcciones IP a los dispositivos","Gestionar sesiones de comunicación"], explanation: "La subcapa MAC maneja el acceso al medio compartido, proporcionando el método para ingresar y extraer tramas del medio físico." },
+  { module: "6.1.5", q: "¿Qué organización define estándares para capas física y de enlace de datos?", correct: "IEEE (Instituto de Ingenieros Eléctricos y Electrónicos)", wrong: ["IETF","IANA","ISO"], explanation: "El IEEE define los estándares 802 para capas física y de enlace de datos (LAN y MAN)." },
+
+  // ── MÓDULO 6.2.9
+  { module: "6.2.9", q: "¿Qué tipo de red usa topologías punto a punto, hub y radio o malla?", correct: "WAN (Red de Área Amplia)", wrong: ["LAN","WLAN","Intranet"], explanation: "Una WAN puede usar topologías punto a punto, hub y radio o malla para conectar múltiples redes a través de grandes distancias." },
+  { module: "6.2.9", q: "¿Qué topología LAN es una topología híbrida?", correct: "Topología en estrella extendida", wrong: ["Topología en bus","Topología en anillo","Topología en malla"], explanation: "La topología en estrella extendida es una topología híbrida que combina características de la topología en estrella con otras configuraciones." },
+  { module: "6.2.9", q: "¿Qué método de control de acceso se usa en Ethernet heredada?", correct: "CSMA/CD (Acceso Múltiple con Detección de Colisiones)", wrong: ["CSMA/CA","Token Ring","TDMA"], explanation: "CSMA/CD se usa en Ethernet tradicional. Detecta y maneja colisiones en el medio compartido." },
+
+  // ── MÓDULO 6.3.5
+  { module: "6.3.5", q: "¿Qué agrega la capa de enlace de datos a un paquete para crear una trama?", correct: "Encabezado y tráiler", wrong: ["Solo encabezado","Solo tráiler","Segmento y encabezado"], explanation: "La capa de enlace de datos agrega encabezado (con información de control y direcciones) y tráiler (con información de detección de errores, FCS)." },
+  { module: "6.3.5", q: "¿Cuáles de los siguientes son protocolos de capa de enlace de datos?", correct: "PPP, 802.11 y Ethernet", wrong: ["TCP, UDP e IP","HTTP, FTP y SMTP","BGP, OSPF y RIP"], explanation: "PPP, 802.11 y Ethernet son protocolos de capa 2 (enlace de datos). TCP y UDP son de transporte; IP es de red." },
+
+  // ── MÓDULO 6.4.2
+  { module: "6.4.2", q: "¿Qué identificador se usa en la capa de enlace para identificar un dispositivo Ethernet?", correct: "Dirección MAC (Control de Acceso al Medio)", wrong: ["Dirección IP","Nombre de host","Número de puerto"], explanation: "La dirección MAC es un identificador único de 48 bits que identifica cada interfaz de red de forma única en la capa de enlace." },
+  { module: "6.4.2", q: "¿Qué método controla acceso por contienda en redes inalámbricas?", correct: "CSMA/CA (Acceso Múltiple con Evasión de Colisiones)", wrong: ["CSMA/CD","Token Ring","TDMA"], explanation: "CSMA/CA es el método de control de acceso inalámbrico. Los dispositivos escuchan antes de transmitir para evitar colisiones." },
+  { module: "6.4.2", q: "¿Qué topología física requiere que todos los nodos estén conectados para máxima redundancia?", correct: "Topología en malla", wrong: ["Topología en estrella","Topología en bus","Topología en anillo"], explanation: "En la topología en malla, cada dispositivo se conecta directamente con todos los demás, proporcionando múltiples rutas alternas para máxima redundancia." },
+  { module: "6.4.2", q: "¿Qué describe el modo semidúplex de transmisión?", correct: "Los datos fluyen en una dirección a la vez a través del medio compartido", wrong: ["Los datos fluyen simultáneamente en ambas direcciones","Los datos solo fluyen del servidor al cliente","Los datos se multiplexan en varios canales"], explanation: "El modo semidúplex significa que los datos fluyen en una dirección a la vez, no simultáneamente en ambas direcciones." },
+  { module: "6.4.2", q: "¿Cuáles son las dos subcapas de la capa de enlace de datos?", correct: "LLC (Control de Enlace Lógico) y MAC (Control de Acceso al Medio)", wrong: ["TCP y UDP","IP y ICMP","ARP y RARP"], explanation: "Las dos subcapas son: LLC que maneja aspectos lógicos y comunicación con capas superiores, y MAC que maneja el acceso físico al medio." },
+  { module: "6.4.2", q: "¿Qué topología se crea al conectar todos los cables a un dispositivo central?", correct: "Topología en estrella", wrong: ["Topología en bus","Topología en malla","Topología en anillo"], explanation: "En la topología en estrella, un dispositivo central (switch o hub) actúa como punto de conexión para todos los demás dispositivos." },
+  { module: "6.4.2", q: "¿Por qué CSMA/CD ya no es necesario en Ethernet moderno?", correct: "Porque los switches full-duplex eliminan las colisiones", wrong: ["Porque se usa fibra óptica en vez de cobre","Porque las velocidades son tan altas que no hay colisiones","Porque el protocolo IP gestiona las colisiones"], explanation: "Los switches de capa 2 con capacidad de dúplex completo eliminan las colisiones, haciendo innecesario el CSMA/CD en Ethernet moderno." },
+
+  // ── MÓDULO 7.1.5
+  { module: "7.1.5", q: "¿Qué parte de una trama Ethernet utiliza un pad para aumentar el campo de trama a al menos 64 bytes?", correct: "Campo de datos", wrong: ["Preámbulo","EtherType","Secuencia de verificación de trama (FCS)"], explanation: "El Campo de datos utiliza un pad (relleno) para alcanzar el tamaño mínimo de 64 bytes cuando los datos son insuficientes." },
+  { module: "7.1.5", q: "¿Qué parte de una trama Ethernet detecta errores en la trama?", correct: "Secuencia de verificación de trama (FCS)", wrong: ["Preámbulo","EtherType","Delimitador de inicio de trama"], explanation: "El FCS contiene un valor calculado mediante CRC que el receptor compara para detectar si la trama fue corrompida." },
+  { module: "7.1.5", q: "¿Qué parte de una trama Ethernet describe el protocolo de capa superior encapsulado?", correct: "EtherType", wrong: ["Preámbulo","FCS (Secuencia de verificación)","Delimitador de inicio de trama"], explanation: "EtherType identifica el protocolo de capa superior encapsulado, como IPv4 (0x0800) o IPv6 (0x86DD)." },
+  { module: "7.1.5", q: "¿Qué parte de una trama Ethernet notifica al receptor que se prepare para una nueva trama?", correct: "Delimitador de inicio de trama (SFD)", wrong: ["Preámbulo","EtherType","Campo de datos"], explanation: "El SFD indica el fin del preámbulo y señala que el siguiente byte es el inicio de la trama, preparando al receptor." },
+  { module: "7.1.5", q: "¿Qué subcapa de enlace de datos controla la interfaz de red a través de controladores de software?", correct: "LLC (Control de Enlace Lógico)", wrong: ["MAC (Control de Acceso al Medio)","IP","TCP"], explanation: "La subcapa LLC actúa como interfaz entre el software de red de las capas superiores y el hardware, gestionando la comunicación mediante controladores de software." },
+  { module: "7.1.5", q: "¿Cuáles son tres funciones de la subcapa MAC?", correct: "Comprobación de errores, control de acceso a medios y uso de CSMA/CD o CSMA/CA", wrong: ["Cifrado, compresión y enrutamiento","Segmentación, reensamblaje y control de flujo","Autenticación, autorización y auditoría"], explanation: "La subcapa MAC se ocupa de la comprobación de errores en bits recibidos, control de acceso a los medios y soporte para CSMA/CD o CSMA/CA." },
+
+  // ── MÓDULO 7.4.6
+  { module: "7.4.6", q: "¿Cuáles son dos métodos para cambiar datos entre puertos de un switch?", correct: "Switching por método de corte (Cut-through) y Store-and-forward", wrong: ["CSMA/CD y CSMA/CA","Unicast y Multicast","LLC y MAC"], explanation: "Cut-through reenvía la trama apenas lee la MAC de destino; Store-and-forward almacena la trama completa antes de reenviarla para verificar errores." },
+  { module: "7.4.6", q: "¿Qué método de switching se puede implementar mediante fast-forward switching o fragment-free switching?", correct: "Switching por método de corte (Cut-through)", wrong: ["Store-and-forward switching","Switching por token","CSMA/CD switching"], explanation: "Ambas variantes (fast-forward y fragment-free) son implementaciones del switching Cut-through, que reenvía la trama antes de recibirla completamente." },
+  { module: "7.4.6", q: "¿Qué dos tipos de técnicas de almacenamiento en búfer de memoria utilizan los switches?", correct: "Búfer de memoria compartida y Búfer de memoria basada en puerto", wrong: ["RAM y ROM","NVRAM y Flash","Caché y búfer de paquetes"], explanation: "En el búfer compartido, todos los puertos comparten un único espacio de memoria; en el basado en puerto, cada puerto tiene su propio búfer." },
+  { module: "7.4.6", q: "¿Qué función negocia automáticamente la mejor velocidad y configuración dúplex entre dispositivos de interconexión?", correct: "Autonegociación", wrong: ["Auto-MDIX","CSMA/CD","STP (Spanning Tree Protocol)"], explanation: "La Autonegociación permite que dos dispositivos conectados determinen automáticamente la velocidad y modo dúplex más altos que ambos soporten." },
+
+  // ── MÓDULO 7.5.2
+  { module: "7.5.2", q: "¿Cuáles dos características describen la tecnología Ethernet?", correct: "Compatible con IEEE 802.3 y usa CSMA/CD", wrong: ["Compatible con IEEE 802.5 y usa token ring","Compatible con IEEE 802.11 y es inalámbrica","Usa topología en anillo y velocidades de 16 MB/s"], explanation: "Ethernet está definida por el estándar IEEE 802.3 y emplea CSMA/CD para gestionar el acceso al medio compartido." },
+  { module: "7.5.2", q: "¿Cuál afirmación describe una característica de las direcciones MAC?", correct: "Deben ser globalmente únicas", wrong: ["Tienen 32 bits de longitud","Son asignadas por software y pueden cambiar","Son enrutables dentro de la red privada"], explanation: "Las direcciones MAC son asignadas por el fabricante y grabadas en la NIC, garantizando que no haya dos dispositivos con la misma dirección MAC en el mundo." },
+  { module: "7.5.2", q: "¿Cuál es el valor especial asignado a los primeros 24 bits de una dirección MAC de multicast?", correct: "01-00-5E", wrong: ["FF-FF-FF","01-5E-00","FF-00-5E"], explanation: "El prefijo 01-00-5E identifica las tramas Ethernet de multicast IPv4. Los primeros 24 bits son fijos y los restantes se derivan de la dirección IP de multicast." },
+  { module: "7.5.2", q: "¿Qué hará un host si recibe una trama con una dirección MAC de destino que no coincide con la suya?", correct: "Se descartará la trama", wrong: ["Reenviará la trama al siguiente host","La enviará al gateway predeterminado","Procesará la trama igualmente"], explanation: "Cuando la MAC de destino no coincide con la del dispositivo ni es broadcast o multicast, el host simplemente descarta la trama." },
+  { module: "7.5.2", q: "¿Qué dispositivo de red toma decisiones de reenvío basadas en la dirección MAC de destino?", correct: "Switch", wrong: ["Router","Repetidor","Concentrador (Hub)"], explanation: "El Switch opera en la capa 2 del modelo OSI y utiliza su tabla de direcciones MAC para decidir por qué puerto reenviar cada trama." },
+  { module: "7.5.2", q: "¿Qué sucede con las tramas cortas que recibe un switch Ethernet Cisco?", correct: "La trama se descarta (son 'runts')", wrong: ["Se envía por broadcast","Se reenvía al gateway","Se devuelve al dispositivo de origen"], explanation: "Las tramas menores a 64 bytes son consideradas inválidas ('runts') y el switch las descarta automáticamente." },
+  { module: "7.5.2", q: "¿Qué información registra un switch para armar su tabla de direcciones MAC?", correct: "La dirección MAC de origen de las tramas entrantes y el puerto de llegada", wrong: ["La dirección IP de destino de los paquetes entrantes","La dirección MAC de destino de las tramas salientes","La dirección IP de origen de los paquetes salientes"], explanation: "Al recibir una trama, el switch asocia la dirección MAC de origen con el puerto por el que llegó, construyendo su tabla de reenvío." },
+  { module: "7.5.2", q: "¿Qué es auto-MDIX?", correct: "Una característica que detecta automáticamente el tipo de cable Ethernet conectado", wrong: ["Un tipo de switch Cisco","Un protocolo de enrutamiento dinámico","Un estándar de cable de fibra óptica"], explanation: "Auto-MDIX permite que el switch configure automáticamente la interfaz para funcionar correctamente sin importar si el cable es directo o cruzado." },
+  { module: "7.5.2", q: "¿Qué tipo de dirección es 01-00-5E-0A-00-02?", correct: "Una dirección multicast (llega a un grupo específico de hosts)", wrong: ["Una dirección unicast (llega a un host específico)","Una dirección broadcast (llega a todos los hosts)","Una dirección anycast"], explanation: "El prefijo 01-00-5E indica que es una dirección MAC de multicast IPv4, destinada a un grupo de dispositivos registrados para recibirla." },
+  { module: "7.5.2", q: "¿Qué declaración es verdadera acerca de las direcciones MAC?", correct: "Los tres primeros bytes son el OUI (Identificador Único de Organización) del proveedor", wrong: ["La ISO es responsable de las regulaciones MAC","Una NIC solo necesita MAC si está en una WAN","Las direcciones MAC son implementadas por software"], explanation: "Los tres primeros bytes del OUI son asignados por el IEEE a cada fabricante, quien define los tres bytes restantes para identificar cada dispositivo." },
+  { module: "7.5.2", q: "¿Cuáles son los dos tamaños (mínimo y máximo) de una trama Ethernet?", correct: "Mínimo 64 bytes y máximo 1518 bytes", wrong: ["Mínimo 32 bytes y máximo 1024 bytes","Mínimo 128 bytes y máximo 2048 bytes","Mínimo 56 bytes y máximo 1518 bytes"], explanation: "Las tramas menores a 64 bytes son 'runts' y las mayores a 1518 bytes son 'gigantes', siendo ambas descartadas por los switches." },
+  { module: "7.5.2", q: "¿Qué dos funciones realiza la subcapa MAC?", correct: "Agrega información de control a los datos y es responsable del Control de Acceso a Medios", wrong: ["Cifra los datos y gestiona sesiones","Segmenta y rearma los datos","Se comunica con capas superiores e identifica protocolos"], explanation: "La subcapa MAC gestiona cómo los dispositivos acceden al medio físico y añade la información de encapsulación necesaria para la transmisión." },
+
+  // ── PRIMER PUNTO DE CONTROL
+  { module: "PPC", q: "¿Cuál es el nombre de todas las computadoras conectadas a una red que participan directamente en la comunicación de red?", correct: "Hosts", wrong: ["Nodos intermediarios","Servidores de red","Clientes pasivos"], explanation: "Los Hosts son los dispositivos finales que intervienen directamente en la comunicación dentro de la red, enviando y recibiendo datos, a diferencia de los dispositivos intermediarios que solo gestionan el tráfico." },
+  { module: "PPC", q: "Cuando los datos se codifican como pulsos de luz, ¿qué medios se utilizan para transmitir los datos?", correct: "Cable de fibra óptica", wrong: ["Cable UTP","Cable coaxial","Cable STP"], explanation: "El cable de fibra óptica transmite la información mediante impulsos de luz que viajan a través de hilos de vidrio o plástico, permitiendo altas velocidades y largas distancias." },
+  { module: "PPC", q: "¿Cuáles de los siguientes son dispositivos intermedios?", correct: "Routers", wrong: ["Hosts","Impresoras","Servidores"], explanation: "Los Routers son dispositivos encargados de conectar diferentes redes entre sí y dirigir el tráfico de datos según direcciones IP, facilitando la comunicación entre distintos segmentos." },
+  { module: "PPC", q: "¿Qué conexión conecta físicamente el dispositivo final a la red?", correct: "NIC (Tarjeta de Interfaz de Red)", wrong: ["Cable de consola","Dirección IP","Puerto USB"], explanation: "La NIC es el componente que permite que un dispositivo se conecte físicamente a la red y pueda enviar y recibir información." },
+  { module: "PPC", q: "¿Qué conexiones son puertos especializados en un dispositivo de red que se conectan a redes individuales?", correct: "Interfaz", wrong: ["Puerto de consola","Bus interno","Slot de expansión"], explanation: "Las interfaces son los puntos de conexión que permiten a un dispositivo de red comunicarse con distintas redes o segmentos, actuando como puertos especializados." },
+  { module: "PPC", q: "¿Qué tipo de topología de red permite ver qué dispositivos finales están conectados a qué dispositivos intermediarios y qué medios se utilizan?", correct: "Topología lógica", wrong: ["Topología física","Topología en malla","Topología de bus"], explanation: "La topología lógica representa cómo se comunican los dispositivos dentro de la red y cómo fluye la información, más allá de la disposición física." },
+  { module: "PPC", q: "¿Qué tipo de topología de red muestra la ubicación real de los dispositivos y la instalación de cables?", correct: "Topología física", wrong: ["Topología lógica","Topología jerárquica","Topología en estrella"], explanation: "La topología física refleja la distribución real de los dispositivos y el cableado dentro de la red." },
+  { module: "PPC", q: "¿Qué infraestructura de red proporciona acceso a usuarios y dispositivos finales en un área geográfica pequeña?", correct: "LAN (Red de Área Local)", wrong: ["WAN","MAN","Extranet"], explanation: "La LAN es una red de área local que cubre espacios reducidos como hogares, oficinas o edificios, permitiendo la conexión de dispositivos cercanos." },
+  { module: "PPC", q: "¿Qué infraestructura de red podría usar una organización para proporcionar acceso seguro a personas de otra organización?", correct: "Extranet", wrong: ["Intranet","Internet pública","VPN interna"], explanation: "La Extranet permite brindar acceso controlado y seguro a usuarios externos, como socios o clientes, manteniendo la protección de la red interna." },
+  { module: "PPC", q: "¿Qué infraestructura de red proporciona acceso a otras redes en un área geográfica grande?", correct: "WAN (Red de Área Amplia)", wrong: ["LAN","MAN","Intranet"], explanation: "La WAN conecta múltiples redes a grandes distancias geográficas, generalmente mediante proveedores de servicios de telecomunicaciones." },
+  { module: "PPC", q: "¿Cuáles son las cuatro características básicas de una arquitectura de red confiable?", correct: "Tolerancia a fallos, Seguridad, Escalabilidad y QoS", wrong: ["Velocidad, Seguridad, Costo y Redundancia","Disponibilidad, Rendimiento, Compatibilidad y Costo","Ancho de banda, Latencia, Fiabilidad y Cifrado"], explanation: "Estas cuatro características permiten mantener la red operativa ante fallas, proteger los datos, crecer según la demanda y priorizar el tráfico." },
+  { module: "PPC", q: "¿Cuáles tres conceptos son requisitos de la seguridad en una red?", correct: "Confidencialidad, Integridad y Disponibilidad", wrong: ["Velocidad, Seguridad y Escalabilidad","Autenticación, Redundancia y Cifrado","Tolerancia, Rendimiento y Acceso"], explanation: "Confidencialidad, Integridad y Disponibilidad garantizan que los datos estén protegidos, no sean alterados y puedan ser accedidos cuando se necesiten." },
+  { module: "PPC", q: "¿Con qué tipo de política un router puede gestionar el flujo de datos y priorizar tráfico?", correct: "QoS (Calidad de Servicio)", wrong: ["Política de firewall","Política de enrutamiento estático","Política de acceso remoto"], explanation: "La QoS permite administrar el tráfico de red asignando prioridades a ciertos datos, como aplicaciones críticas o videollamadas." },
+  { module: "PPC", q: "¿Qué característica de la red representa la existencia de múltiples rutas hacia un destino?", correct: "Tolerancia a fallos", wrong: ["Escalabilidad","QoS","Seguridad"], explanation: "La Tolerancia a fallos permite que, ante la caída de una ruta, los datos puedan seguir circulando por caminos alternativos." },
+  { module: "PPC", q: "¿Qué herramienta permite comunicarse con personas en otra ubicación geográfica?", correct: "Comunicaciones de video", wrong: ["Computación en la nube","BYOD","Banda ancha inalámbrica"], explanation: "Las comunicaciones de video posibilitan la interacción en tiempo real entre personas ubicadas en distintos lugares sin necesidad de desplazamiento físico." },
+  { module: "PPC", q: "¿Qué característica describe el uso de dispositivos personales en redes empresariales?", correct: "BYOD (Bring Your Own Device)", wrong: ["Computación en la nube","Banda ancha inalámbrica","Hogar inteligente"], explanation: "El BYOD permite que los usuarios utilicen sus propios dispositivos (como celulares o notebooks) para acceder a la red corporativa." },
+  { module: "PPC", q: "¿Qué característica incluye opciones como público, privado, híbrido y personalizado?", correct: "Computación en la nube", wrong: ["BYOD","VPN empresarial","Banda ancha inalámbrica"], explanation: "La Computación en la nube ofrece distintos modelos de implementación según las necesidades de acceso, seguridad y control de los datos." },
+  { module: "PPC", q: "¿Qué función permite conectar dispositivos a la red mediante la red eléctrica?", correct: "Tecnología del hogar inteligente", wrong: ["Computación en la nube","BYOD","Banda ancha inalámbrica"], explanation: "La Tecnología del hogar inteligente utiliza el cableado eléctrico existente para transmitir datos y conectar dispositivos a la red." },
+  { module: "PPC", q: "¿Qué función usa la misma tecnología celular que un smartphone?", correct: "Banda ancha inalámbrica", wrong: ["Computación en la nube","BYOD","Hogar inteligente"], explanation: "La Banda ancha inalámbrica utiliza redes móviles para proporcionar acceso a internet sin necesidad de conexiones cableadas." },
+  { module: "PPC", q: "¿Qué ataque ralentiza o bloquea equipos y servicios?", correct: "Ataque DoS (Denegación de Servicio)", wrong: ["Ataque Zero-day","Malware","Phishing"], explanation: "El DoS satura el sistema con múltiples solicitudes, impidiendo que los usuarios legítimos puedan acceder a los servicios." },
+  { module: "PPC", q: "¿Qué opción crea una conexión segura para trabajadores remotos?", correct: "VPN (Red Privada Virtual)", wrong: ["Firewall","Antivirus","Proxy"], explanation: "La VPN establece un túnel cifrado que permite acceder a la red de forma segura desde ubicaciones externas." },
+  { module: "PPC", q: "¿Qué opción bloquea accesos no autorizados a la red?", correct: "Firewall", wrong: ["VPN","Antivirus","IDS"], explanation: "El Firewall filtra el tráfico entrante y saliente según reglas de seguridad, protegiendo la red de accesos indebidos." },
+  { module: "PPC", q: "¿Qué ataque ocurre el mismo día que se descubre una vulnerabilidad?", correct: "Ataque Zero-day (Día Cero)", wrong: ["Ataque DoS","Malware","Phishing"], explanation: "El Zero-day se aprovecha de una vulnerabilidad recién descubierta para la cual aún no existe solución." },
+  { module: "PPC", q: "¿Qué describe el código malicioso que se ejecuta en dispositivos?", correct: "Malware (virus, gusano o troyano)", wrong: ["Firewall","Ataque DoS","Zero-day"], explanation: "El Malware incluye programas como virus o troyanos que afectan el funcionamiento del sistema o roban información." },
+  { module: "PPC", q: "¿Qué método de acceso se usa para configurar inicialmente un switch?", correct: "Consola", wrong: ["SSH","Telnet","Acceso inalámbrico"], explanation: "La consola permite acceso directo al dispositivo sin necesidad de configuración previa de red." },
+  { module: "PPC", q: "¿Qué método permite acceso remoto seguro al IOS?", correct: "SSH (Secure Shell)", wrong: ["Telnet","Consola","AUX port"], explanation: "SSH cifra la comunicación entre el usuario y el dispositivo, brindando mayor seguridad que otros métodos como Telnet." },
+  { module: "PPC", q: "¿Qué modo permite acceso completo a comandos del dispositivo?", correct: "Modo EXEC Privilegiado", wrong: ["Modo EXEC de Usuario","Modo de Configuración de Interfaz","Modo de Configuración de Línea"], explanation: "El Modo EXEC Privilegiado habilita todas las funciones de configuración y administración del equipo, identificado por el símbolo '#'." },
+  { module: "PPC", q: "¿En qué modo se encuentra si aparece 'Switch(config)#'?", correct: "Modo de Configuración Global", wrong: ["Modo EXEC Privilegiado","Modo EXEC de Usuario","Modo de Configuración de Interfaz"], explanation: "Switch(config)# indica el Modo de Configuración Global, donde se realizan configuraciones que afectan a todo el dispositivo." },
+  { module: "PPC", q: "¿En qué modo se encuentra si aparece 'Switch>'?", correct: "Modo EXEC de Usuario", wrong: ["Modo EXEC Privilegiado","Modo de Configuración Global","Modo de Configuración de Interfaz"], explanation: "El símbolo '>' indica el Modo EXEC de Usuario, que permite ejecutar comandos básicos de consulta pero no configuraciones avanzadas." },
+  { module: "PPC", q: "¿Qué comandos permiten volver al modo privilegiado desde cualquier lugar?", correct: "end o Ctrl+Z", wrong: ["exit y quit","logout y disable","Ctrl+C y Ctrl+D"], explanation: "Los comandos 'end' y 'Ctrl+Z' finalizan el modo de configuración actual y devuelven al modo EXEC privilegiado desde cualquier submodo." },
+  { module: "PPC", q: "¿Cuál es la estructura de una dirección IPv4?", correct: "Formato decimal punteado", wrong: ["Formato hexadecimal","Formato binario","Formato octal"], explanation: "Una dirección IPv4 se representa mediante cuatro números entre 0 y 255 separados por puntos (ej: 192.168.1.1)." },
+  { module: "PPC", q: "¿Qué tipo de interfaz no tiene puerto físico?", correct: "SVI (Interfaz Virtual de Switch)", wrong: ["Interfaz FastEthernet","Interfaz GigabitEthernet","Interfaz serial"], explanation: "La SVI es una interfaz virtual creada en el switch para administración o comunicación entre VLANs, sin ningún puerto físico asociado." },
+  { module: "PPC", q: "¿Qué memoria pierde su contenido al reiniciar el dispositivo?", correct: "RAM (Memoria de Acceso Aleatorio)", wrong: ["NVRAM","Flash","ROM"], explanation: "La RAM es una memoria volátil que necesita energía para conservar la información y se borra completamente al reiniciar el dispositivo." },
+];
+
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+let quizQuestions = [];
+let quizIndex = 0;
+let quizCorrect = 0;
+let quizWrong = 0;
+let wrongQuestions = [];
+let answered = false;
+let isRepasoMode = false;
+let activeModule = 'all';
+
+let flashQuestions = [];
+let flashIndex = 0;
+let flashModule = 'all';
+
+// Load saved progress
+const saved = JSON.parse(localStorage.getItem('redesProgress') || '{"correct":0,"wrong":0,"total":0}');
+
+// ════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getModules() {
+  const mods = [...new Set(ALL_QUESTIONS.map(q => q.module))];
+  return mods.sort((a,b) => a.localeCompare(b, undefined, {numeric:true}));
+}
+
+// Returns e.g. { "1": ["1.2.6","1.3.3",...], "PPC": ["PPC"], ... }
+function getGroupedModules() {
+  const mods = getModules();
+  const groups = {};
+  mods.forEach(m => {
+    if (m === 'PPC') {
+      groups['PPC'] = ['PPC'];
+    } else {
+      const parent = m.split('.')[0];
+      if (!groups[parent]) groups[parent] = [];
+      groups[parent].push(m);
+    }
+  });
+  return groups;
+}
+
+function getFiltered(mod) {
+  if (mod === 'all') return [...ALL_QUESTIONS];
+  // group filter e.g. "1" → all submodules starting with "1."
+  if (!mod.includes('.')) return ALL_QUESTIONS.filter(q => q.module.startsWith(mod + '.') || q.module === mod);
+  return ALL_QUESTIONS.filter(q => q.module === mod);
+}
+
+function countFor(mod) {
+  return getFiltered(mod).length;
+}
+
+// Build two-level filter UI
+// mode: 'quiz' | 'flash'
+function buildModuleFilter(containerId, mode) {
+  const groups = getGroupedModules();
+  const container = document.getElementById(containerId);
+  const onAllClick = mode === 'quiz' ? "selectFilter('all','all','quiz')" : "selectFilter('all','all','flash')";
+
+  let html = `<div class="filter-chip-all active" id="${containerId}_all" onclick="${onAllClick}">
+    <span>📚 Todos los módulos</span>
+    <span class="filter-group-count">${ALL_QUESTIONS.length} preguntas</span>
+  </div>`;
+
+  Object.entries(groups).forEach(([parent, subs]) => {
+    const groupCount = countFor(parent);
+    const groupOnClick = mode === 'quiz'
+      ? `selectFilter('${parent}','${containerId}','quiz')`
+      : `selectFilter('${parent}','${containerId}','flash')`;
+
+    // Single-entry groups (like PPC) render as a flat chip row, no expand
+    if (subs.length === 1 && subs[0] === parent) {
+      const label = parent === 'PPC' ? '🎯 Punto de Control' : `Módulo ${parent}`;
+      html += `<div class="filter-group">
+        <div class="filter-group-header group-direct" onclick="${groupOnClick}" id="${containerId}_chip_${parent}" style="cursor:pointer">
+          <div class="filter-group-label">
+            <span class="filter-chip group-select" id="${containerId}_chip_${parent}_inner">${label}</span>
+            <span class="filter-group-count">${groupCount} preguntas</span>
+          </div>
+        </div>
+      </div>`;
+      return;
+    }
+
+    const bodyId = `${containerId}_body_${parent}`;
+    const arrowId = `${containerId}_arrow_${parent}`;
+
+    const subChips = subs.map(sub => {
+      const subCount = countFor(sub);
+      const subOnClick = mode === 'quiz'
+        ? `selectFilter('${sub}','${containerId}','quiz')`
+        : `selectFilter('${sub}','${containerId}','flash')`;
+      return `<span class="filter-chip" id="${containerId}_chip_${sub.replace(/\./g,'_')}" onclick="${subOnClick}">
+        ${sub} <span style="opacity:0.6">(${subCount})</span>
+      </span>`;
+    }).join('');
+
+    html += `<div class="filter-group">
+      <div class="filter-group-header" onclick="toggleGroup('${bodyId}','${arrowId}')">
+        <div class="filter-group-label">
+          <span class="filter-chip group-select" id="${containerId}_chip_${parent}" onclick="event.stopPropagation();${groupOnClick}">
+            Módulo ${parent}
+          </span>
+          <span class="filter-group-count">${groupCount} preguntas</span>
+        </div>
+        <span class="filter-group-arrow" id="${arrowId}">▶</span>
+      </div>
+      <div class="filter-group-body" id="${bodyId}">
+        ${subChips}
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleGroup(bodyId, arrowId) {
+  const body = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+// Central select handler for both modes
+let quizActiveFilter = 'all';
+let flashActiveFilter = 'all';
+
+function selectFilter(mod, containerId, mode) {
+  // Clear all active states in this filter
+  const container = document.getElementById(containerId);
+  if (container) {
+    container.querySelectorAll('.filter-chip-all').forEach(el => el.classList.remove('active'));
+    container.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
+    container.querySelectorAll('.filter-group-header').forEach(el => el.classList.remove('group-active'));
+  }
+
+  // Mark the selected one active
+  if (mod === 'all') {
+    const allEl = document.getElementById(`${containerId}_all`);
+    if (allEl) allEl.classList.add('active');
+  } else if (!mod.includes('.')) {
+    // group chip
+    const chipEl = document.getElementById(`${containerId}_chip_${mod}`);
+    if (chipEl) chipEl.classList.add('active');
+  } else {
+    // submodule chip
+    const key = mod.replace(/\./g,'_');
+    const chipEl = document.getElementById(`${containerId}_chip_${key}`);
+    if (chipEl) chipEl.classList.add('active');
+    // Also open that group
+    const parent = mod.split('.')[0];
+    const bodyId = `${containerId}_body_${parent}`;
+    const arrowId = `${containerId}_arrow_${parent}`;
+    const body = document.getElementById(bodyId);
+    const arrow = document.getElementById(arrowId);
+    if (body) body.classList.add('open');
+    if (arrow) arrow.classList.add('open');
+  }
+
+  if (mode === 'quiz') {
+    quizActiveFilter = mod;
+    activeModule = mod;
+    startQuizWithModule(mod);
+  } else {
+    flashActiveFilter = mod;
+    flashModule = mod;
+    initFlash(mod);
+  }
+}
+
+function selectQuizModule(mod, el) {} // kept for compat
+function selectFlashModule(mod, el) {} // kept for compat
+
+function showToast(msg, duration=2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ════════════════════════════════════════════════════
+// THEME
+// ════════════════════════════════════════════════════
+const themeBtn = document.getElementById('themeBtn');
+let isDark = true;
+themeBtn.onclick = () => {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  themeBtn.textContent = isDark ? '🌙' : '☀️';
+};
+
+// ════════════════════════════════════════════════════
+// HOME
+// ════════════════════════════════════════════════════
+async function updateHomeStats() {
+  const user = getCurrentUser();
+  let correct = 0, total = 0;
+  if (user && _usersCache) {
+    const u = _usersCache[user] || {correct:0, total:0};
+    correct = u.correct; total = u.total;
+  }
+  document.getElementById('homeStats').innerHTML = `
+    <div class="stat"><div class="stat-num">${ALL_QUESTIONS.length}</div><div class="stat-label">Preguntas totales</div></div>
+    <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Respondidas ${user ? 'por ti' : ''}</div></div>
+    <div class="stat"><div class="stat-num">${total > 0 ? Math.round(correct/total*100) : 0}%</div><div class="stat-label">Precisión</div></div>
+  `;
+}
+
+function goHome() {
+  document.getElementById('home').style.display = 'flex';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  updateHomeStats();
+}
+
+function showScreen(id) {
+  document.getElementById('home').style.display = 'none';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ════════════════════════════════════════════════════
+// QUIZ MODE
+// ════════════════════════════════════════════════════
+
+function startMode(mode) {
+  isRepasoMode = false;
+  if (mode === 'quiz') {
+    showScreen('quizScreen');
+    buildModuleFilter('quizFilter', 'quiz');
+    document.getElementById('repassoBadge').style.display = 'none';
+    startQuizWithModule('all');
+  } else {
+    showScreen('flashScreen');
+    buildModuleFilter('flashFilter', 'flash');
+    initFlash('all');
+  }
+}
+
+function startRepaso() {
+  if (wrongQuestions.length === 0) { showToast('¡No tenés errores que repasar! 🎉'); return; }
+  isRepasoMode = true;
+  showScreen('quizScreen');
+  document.getElementById('repassoBadge').style.display = 'flex';
+  quizQuestions = shuffle(wrongQuestions);
+  quizIndex = 0; quizCorrect = 0; quizWrong = 0;
+  wrongQuestions = [];
+  renderQuestion();
+}
+
+function startQuizWithModule(mod) {
+  const pool = mod === 'all' ? ALL_QUESTIONS : getFiltered(mod);
+  quizQuestions = shuffle(pool);
+  quizIndex = 0; quizCorrect = 0; quizWrong = 0;
+  wrongQuestions = [];
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (quizIndex >= quizQuestions.length) {
+    showResults();
+    return;
+  }
+  answered = false;
+  const q = quizQuestions[quizIndex];
+  const total = quizQuestions.length;
+  const pct = Math.round((quizIndex / total) * 100);
+
+  document.getElementById('progText').textContent = `Pregunta ${quizIndex+1} de ${total}`;
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('chipCorrect').textContent = `✓ ${quizCorrect} correctas`;
+  document.getElementById('chipWrong').textContent = `✗ ${quizWrong} incorrectas`;
+  document.getElementById('chipRemaining').textContent = `⬦ ${total - quizIndex} restantes`;
+  document.getElementById('nextBtn').disabled = true;
+
+  const options = shuffle([q.correct, ...q.wrong]);
+  const letters = ['A','B','C','D'];
+
+  document.getElementById('quizContent').innerHTML = `
+    <div class="question-card">
+      <div class="q-module">Módulo ${q.module}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="optionsWrap">
+        ${options.map((opt, i) => `
+          <div class="option" id="opt${i}" onclick="selectAnswer('${opt.replace(/'/g,"\\'")}', ${i})">
+            <span class="opt-letter">${letters[i]}</span>
+            <span>${opt}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="feedback-box" id="feedbackBox"></div>
+    </div>
+  `;
+}
+
+function selectAnswer(selected, idx) {
+  if (answered) return;
+  answered = true;
+  const q = quizQuestions[quizIndex];
+  const isCorrect = selected === q.correct;
+  const options = document.querySelectorAll('.option');
+  const letters = ['A','B','C','D'];
+
+  options.forEach((opt, i) => {
+    opt.classList.add('disabled');
+    const optText = opt.querySelector('span:last-child').textContent;
+    if (optText === q.correct) {
+      opt.classList.add('correct');
+      opt.innerHTML += '<span class="opt-icon">✓</span>';
+    } else if (i === idx && !isCorrect) {
+      opt.classList.add('wrong');
+      opt.innerHTML += '<span class="opt-icon">✗</span>';
+    }
+  });
+
+  const fb = document.getElementById('feedbackBox');
+  if (isCorrect) {
+    quizCorrect++;
+    fb.className = 'feedback-box correct-fb show';
+    fb.innerHTML = `<div class="feedback-title">✓ ¡Correcto!</div>${q.explanation}`;
+  } else {
+    quizWrong++;
+    wrongQuestions.push(q);
+    fb.className = 'feedback-box wrong-fb show';
+    fb.innerHTML = `<div class="feedback-title">✗ Incorrecto</div><strong>Respuesta correcta:</strong> ${q.correct}<br><br>${q.explanation}`;
+  }
+
+  document.getElementById('nextBtn').disabled = false;
+
+  // Save progress (global + per user)
+  const s = JSON.parse(localStorage.getItem('redesProgress') || '{"correct":0,"wrong":0,"total":0}');
+  s.total += 1;
+  if (isCorrect) s.correct += 1; else s.wrong += 1;
+  localStorage.setItem('redesProgress', JSON.stringify(s));
+  recordAnswer(isCorrect, q.module);
+
+  document.getElementById('chipCorrect').textContent = `✓ ${quizCorrect} correctas`;
+  document.getElementById('chipWrong').textContent = `✗ ${quizWrong} incorrectas`;
+}
+
+function nextQuestion() {
+  quizIndex++;
+  renderQuestion();
+}
+
+function skipQuestion() {
+  if (!answered) {
+    wrongQuestions.push(quizQuestions[quizIndex]);
+    quizWrong++;
+  }
+  quizIndex++;
+  renderQuestion();
+}
+
+function showResults() {
+  showScreen('resultScreen');
+  const total = quizCorrect + quizWrong;
+  const pct = total > 0 ? Math.round(quizCorrect / total * 100) : 0;
+  let emoji = '😅', title = 'Seguí practicando';
+  if (pct >= 90) { emoji = '🏆'; title = '¡Excelente!'; }
+  else if (pct >= 70) { emoji = '🎉'; title = '¡Muy bien!'; }
+  else if (pct >= 50) { emoji = '👍'; title = 'Bien, pero podés mejorar'; }
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultSub').textContent = `Completaste ${total} pregunta${total!==1?'s':''} del módulo`;
+  document.getElementById('rCorrect').textContent = quizCorrect;
+  document.getElementById('rWrong').textContent = quizWrong;
+  document.getElementById('rPct').textContent = pct + '%';
+  document.getElementById('repasoBtn').style.display = wrongQuestions.length > 0 ? 'flex' : 'none';
+}
+
+// ════════════════════════════════════════════════════
+// FLASHCARD MODE
+// ════════════════════════════════════════════════════
+function initFlash(mod) {
+  const pool = mod === 'all' ? ALL_QUESTIONS : getFiltered(mod);
+  flashQuestions = [...pool];
+  flashIndex = 0;
+  renderFlash();
+}
+
+function renderFlash() {
+  const card = document.getElementById('flashcard');
+  card.classList.remove('flipped');
+  const q = flashQuestions[flashIndex];
+  const total = flashQuestions.length;
+
+  document.getElementById('flashProgText').textContent = `${flashIndex+1} de ${total}`;
+  document.getElementById('flashProgFill').style.width = Math.round(((flashIndex+1)/total)*100) + '%';
+  document.getElementById('flashCounter').textContent = `${flashIndex+1} / ${total}`;
+  document.getElementById('cardModule').textContent = `Módulo ${q.module}`;
+  document.getElementById('cardQuestion').textContent = q.q;
+
+  // Bold key term in answer
+  let ans = q.explanation;
+  document.getElementById('cardAnswer').innerHTML = `<strong>${q.correct}</strong><br><br>${ans}`;
+}
+
+function flipCard() {
+  document.getElementById('flashcard').classList.toggle('flipped');
+}
+
+function flashNext() {
+  if (flashIndex < flashQuestions.length - 1) {
+    flashIndex++;
+    renderFlash();
+  } else {
+    showToast('¡Llegaste al final del mazo! 🎉');
+  }
+}
+
+function flashPrev() {
+  if (flashIndex > 0) {
+    flashIndex--;
+    renderFlash();
+  }
+}
+
+function shuffleFlash() {
+  flashQuestions = shuffle(flashQuestions);
+  flashIndex = 0;
+  renderFlash();
+  showToast('🔀 Tarjetas mezcladas');
+}
+
+function resetFlash() {
+  const pool = flashModule === 'all' ? ALL_QUESTIONS : getFiltered(flashModule);
+  flashQuestions = [...pool];
+  flashIndex = 0;
+  renderFlash();
+  showToast('↺ Mazo reiniciado');
+}
+
+// ════════════════════════════════════════════════════
+// USER & RANKING SYSTEM — SHARED CLOUD STORAGE
+// ════════════════════════════════════════════════════
+
+const CLOUD_KEY = 'redes_cisco_users_v1';
+const CURRENT_USER_KEY = 'redesCurrentUser';
+
+const AVATAR_COLORS = [
+  'linear-gradient(135deg,#4f7cff,#7ba4ff)',
+  'linear-gradient(135deg,#ff4f6d,#ff8fa0)',
+  'linear-gradient(135deg,#4fffa8,#2dd18a)',
+  'linear-gradient(135deg,#f7b731,#ffd32a)',
+  'linear-gradient(135deg,#a55eea,#d070ff)',
+  'linear-gradient(135deg,#fd9644,#ffb347)',
+  'linear-gradient(135deg,#26de81,#20bf6b)',
+  'linear-gradient(135deg,#45aaf2,#2d98da)',
+];
+
+// ── Cloud read/write helpers ──────────────────────
+async function cloudGet() {
+  try {
+    const res = await window.storage.get(CLOUD_KEY, true);
+    return res ? JSON.parse(res.value) : {};
+  } catch { return {}; }
+}
+
+async function cloudSet(data) {
+  try {
+    await window.storage.set(CLOUD_KEY, JSON.stringify(data), true);
+  } catch(e) { console.warn('cloud save failed', e); }
+}
+
+// Local cache to avoid blocking the UI on every answer
+let _usersCache = null;
+async function getUsers() {
+  if (!_usersCache) _usersCache = await cloudGet();
+  return _usersCache;
+}
+async function saveUsers(users) {
+  _usersCache = users;
+  await cloudSet(users);
+}
+
+function getCurrentUser() {
+  return localStorage.getItem(CURRENT_USER_KEY) || null;
+}
+function setCurrentUser(name) {
+  localStorage.setItem(CURRENT_USER_KEY, name);
+}
+
+function getUserColor(name) {
+  let hash = 0;
+  for (let c of name) hash = (hash << 5) - hash + c.charCodeAt(0);
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+function getInitials(name) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+}
+
+async function ensureUser(name) {
+  const users = await getUsers();
+  if (!users[name]) users[name] = { correct:0, wrong:0, total:0, byModule:{} };
+  await saveUsers(users);
+  return users[name];
+}
+
+// Called after each answered question
+async function recordAnswer(isCorrect, module) {
+  const user = getCurrentUser();
+  if (!user) return;
+  // Reload from cloud to avoid overwriting concurrent changes
+  _usersCache = await cloudGet();
+  const users = _usersCache;
+  if (!users[user]) users[user] = { correct:0, wrong:0, total:0, byModule:{} };
+  users[user].total++;
+  if (isCorrect) users[user].correct++; else users[user].wrong++;
+  if (!users[user].byModule[module]) users[user].byModule[module] = {correct:0, wrong:0, total:0};
+  users[user].byModule[module].total++;
+  if (isCorrect) users[user].byModule[module].correct++;
+  else users[user].byModule[module].wrong++;
+  await saveUsers(users);
+}
+
+// ── Open user selector modal ──────────────────────
+async function openUserModal() {
+  setLoading(true);
+  const users = await getUsers();
+  _usersCache = users;
+  setLoading(false);
+
+  const names = Object.keys(users);
+  const listEl = document.getElementById('userList');
+  document.getElementById('newUserInput').value = '';
+  const currentUser = getCurrentUser();
+
+  if (names.length === 0) {
+    listEl.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;text-align:center;padding:12px">No hay usuarios todavía. ¡Creá el primero!</div>';
+  } else {
+    listEl.innerHTML = names.map(name => {
+      const u = users[name];
+      const pct = u.total > 0 ? Math.round(u.correct/u.total*100) : 0;
+      const isCurrent = name === currentUser;
+      return `<div class="user-btn${isCurrent?' user-btn-active':''}" onclick="loginUser('${name.replace(/'/g,"\\'")}')">
+        <div class="user-avatar" style="background:${getUserColor(name)}">${getInitials(name)}</div>
+        <div class="user-info">
+          <div class="user-name">${name}${isCurrent?' <span style="font-size:0.7rem;color:var(--accent);font-weight:700">activo</span>':''}</div>
+          <div class="user-stats-mini">${u.total} respondidas · ${pct}% precisión</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="icon-btn" title="Reiniciar progreso" onclick="event.stopPropagation();confirmReset('${name.replace(/'/g,"\\'")}')">↺</button>
+          <button class="icon-btn icon-btn-danger" title="Eliminar usuario" onclick="event.stopPropagation();confirmDelete('${name.replace(/'/g,"\\'")}')">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('userModal').style.display = 'flex';
+}
+
+function setLoading(on) {
+  const list = document.getElementById('userList');
+  if (on) list.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;text-align:center;padding:16px">⏳ Cargando usuarios...</div>';
+}
+
+async function loginUser(name) {
+  await ensureUser(name);
+  setCurrentUser(name);
+  document.getElementById('userModal').style.display = 'none';
+  updateUserChip();
+  updateHomeStats();
+  showToast(`👋 ¡Hola, ${name}!`);
+}
+
+async function createUser() {
+  const input = document.getElementById('newUserInput');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  if (name.length < 2) { showToast('El nombre debe tener al menos 2 caracteres'); return; }
+  const users = await getUsers();
+  if (users[name]) { showToast(`El usuario "${name}" ya existe`); loginUser(name); return; }
+  await ensureUser(name);
+  loginUser(name);
+}
+
+// ── Reset / Delete ────────────────────────────────
+function confirmReset(name) {
+  showConfirm(
+    `¿Reiniciar el progreso de <strong>${name}</strong>?`,
+    'Se borrarán todas sus estadísticas. No se puede deshacer.',
+    () => resetUserProgress(name),
+    'Reiniciar', 'btn-danger'
+  );
+}
+
+function confirmDelete(name) {
+  showConfirm(
+    `¿Eliminar al usuario <strong>${name}</strong>?`,
+    'Se borrarán su cuenta y todo su progreso permanentemente.',
+    () => deleteUser(name),
+    'Eliminar', 'btn-danger'
+  );
+}
+
+async function resetUserProgress(name) {
+  const users = await getUsers();
+  if (!users[name]) return;
+  users[name] = { correct:0, wrong:0, total:0, byModule:{} };
+  await saveUsers(users);
+  showToast(`↺ Progreso de ${name} reiniciado`);
+  openUserModal();
+  if (getCurrentUser() === name) updateHomeStats();
+}
+
+async function deleteUser(name) {
+  const users = await getUsers();
+  delete users[name];
+  await saveUsers(users);
+  if (getCurrentUser() === name) {
+    localStorage.removeItem(CURRENT_USER_KEY);
+    updateUserChip();
+    updateHomeStats();
+  }
+  showToast(`🗑 Usuario "${name}" eliminado`);
+  openUserModal();
+}
+
+// ── Generic confirm dialog ────────────────────────
+function showConfirm(title, sub, onConfirm, confirmLabel, confirmClass) {
+  document.getElementById('confirmTitle').innerHTML = title;
+  document.getElementById('confirmSub').textContent = sub;
+  const btn = document.getElementById('confirmOkBtn');
+  btn.textContent = confirmLabel;
+  btn.className = `btn ${confirmClass}`;
+  btn.onclick = () => {
+    document.getElementById('confirmModal').style.display = 'none';
+    onConfirm();
+  };
+  document.getElementById('confirmModal').style.display = 'flex';
+}
+
+// ── User chip in header ───────────────────────────
+function updateUserChip() {
+  const user = getCurrentUser();
+  const chip = document.getElementById('userChip');
+  if (user) {
+    chip.style.display = 'flex';
+    document.getElementById('userChipAvatar').style.background = getUserColor(user);
+    document.getElementById('userChipAvatar').textContent = getInitials(user);
+    document.getElementById('userChipName').textContent = user;
+  } else {
+    chip.style.display = 'none';
+  }
+}
+
+// ── Ranking screen ────────────────────────────────
+async function showRanking() {
+  showScreen('rankingScreen');
+  document.getElementById('rankingList').innerHTML = '<div style="text-align:center;color:var(--text2);padding:32px">⏳ Cargando ranking...</div>';
+  _usersCache = await cloudGet();
+  buildRanking();
+}
+
+function buildRanking() {
+  const users = _usersCache || {};
+  const currentUser = getCurrentUser();
+  const entries = Object.entries(users).map(([name, data]) => ({name, ...data}));
+  entries.sort((a, b) => b.correct - a.correct);
+
+  const listEl = document.getElementById('rankingList');
+  if (entries.length === 0) {
+    listEl.innerHTML = `<div style="text-align:center;color:var(--text2);padding:40px 0">
+      <div style="font-size:3rem;margin-bottom:16px">🏜️</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:8px">El ranking está vacío</div>
+      <div style="font-size:0.88rem">¡Creá un usuario y empezá a practicar!</div>
+    </div>`;
+    return;
+  }
+
+  const medals = ['🥇','🥈','🥉'];
+  const maxCorrect = Math.max(entries[0]?.correct || 1, 1);
+
+  listEl.innerHTML = entries.map((u, i) => {
+    const pct = u.total > 0 ? Math.round(u.correct/u.total*100) : 0;
+    const barW = Math.round((u.correct/maxCorrect)*100);
+    const rankClass = i < 3 ? `rank-${i+1}` : '';
+    const currentClass = u.name === currentUser ? 'current-user' : '';
+    const posLabel = i < 3 ? medals[i] : `#${i+1}`;
+    return `<div class="rank-card ${rankClass} ${currentClass}" onclick="showBreakdown('${u.name.replace(/'/g,"\\'")}')">
+      <div class="rank-pos">${posLabel}</div>
+      <div class="rank-avatar" style="background:${getUserColor(u.name)}">${getInitials(u.name)}</div>
+      <div class="rank-info">
+        <div class="rank-name">${u.name}${u.name === currentUser ? ' <span style="font-size:0.7rem;color:var(--accent);font-weight:600">TÚ</span>' : ''}</div>
+        <div class="rank-detail">${u.total} respondidas · ${pct}% precisión · ✗ ${u.wrong} errores</div>
+        <div class="rank-bar-wrap"><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${barW}%"></div></div></div>
+      </div>
+      <div class="rank-score-wrap">
+        <div class="rank-score-num">${u.correct}</div>
+        <div class="rank-score-label">correctas</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showBreakdown(name) {
+  const users = _usersCache || {};
+  const u = users[name];
+  if (!u) return;
+  const pct = u.total > 0 ? Math.round(u.correct/u.total*100) : 0;
+  const mods = Object.entries(u.byModule || {}).sort((a,b) => b[1].correct - a[1].correct);
+  const maxMod = Math.max(mods.reduce((m,[,v]) => Math.max(m, v.correct), 1), 1);
+  const currentUser = getCurrentUser();
+  const isMe = name === currentUser;
+
+  const modRows = mods.length > 0 ? mods.map(([mod, data]) => {
+    const mPct = data.total > 0 ? Math.round(data.correct/data.total*100) : 0;
+    const barW = Math.round((data.correct/maxMod)*100);
+    return `<div class="breakdown-row">
+      <div class="breakdown-mod">Mód. ${mod}</div>
+      <div class="breakdown-bar-bg"><div class="breakdown-bar-fill" style="width:${barW}%"></div></div>
+      <div class="breakdown-nums">${data.correct}/${data.total} (${mPct}%)</div>
+    </div>`;
+  }).join('') : '<div style="color:var(--text3);font-size:0.85rem;padding:8px 0">Sin datos por módulo todavía.</div>';
+
+  document.getElementById('breakdownContent').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="rank-avatar" style="background:${getUserColor(name)};width:48px;height:48px;font-size:1.1rem">${getInitials(name)}</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem">${name}</div>
+          <div style="color:var(--text2);font-size:0.85rem">${u.total} preguntas · ${pct}% precisión</div>
+        </div>
+      </div>
+      ${isMe ? `<div style="display:flex;gap:8px">
+        <button class="btn btn-secondary" style="padding:7px 12px;font-size:0.8rem" onclick="document.getElementById('breakdownModal').style.display='none';confirmReset('${name.replace(/'/g,"\\'")}')">↺ Reiniciar</button>
+        <button class="btn btn-danger" style="padding:7px 12px;font-size:0.8rem" onclick="document.getElementById('breakdownModal').style.display='none';confirmDelete('${name.replace(/'/g,"\\'")}')">✕ Eliminar</button>
+      </div>` : ''}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
+      <div class="result-box"><div class="result-box-num" style="color:var(--correct)">${u.correct}</div><div class="result-box-label">Correctas</div></div>
+      <div class="result-box"><div class="result-box-num" style="color:var(--wrong)">${u.wrong}</div><div class="result-box-label">Incorrectas</div></div>
+      <div class="result-box"><div class="result-box-num" style="color:var(--accent)">${pct}%</div><div class="result-box-label">Precisión</div></div>
+    </div>
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase">Desglose por Módulo</div>
+    <div class="breakdown-list">${modRows}</div>
+  `;
+  document.getElementById('breakdownModal').style.display = 'flex';
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+async function init() {
+  updateUserChip();
+  _usersCache = await cloudGet();
+  updateHomeStats();
+  if (!getCurrentUser()) openUserModal();
+}
+init();
+</script>
+</body>
+</html>
