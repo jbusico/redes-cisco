@@ -1359,19 +1359,6 @@ themeBtn.onclick = () => {
 // ════════════════════════════════════════════════════
 // HOME
 // ════════════════════════════════════════════════════
-async function updateHomeStats() {
-  const user = getCurrentUser();
-  let correct = 0, total = 0;
-  if (user && _usersCache) {
-    const u = _usersCache[user] || {correct:0, total:0};
-    correct = u.correct; total = u.total;
-  }
-  document.getElementById('homeStats').innerHTML = `
-    <div class="stat"><div class="stat-num">${ALL_QUESTIONS.length}</div><div class="stat-label">Preguntas totales</div></div>
-    <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Respondidas ${user ? 'por ti' : ''}</div></div>
-    <div class="stat"><div class="stat-num">${total > 0 ? Math.round(correct/total*100) : 0}%</div><div class="stat-label">Precisión</div></div>
-  `;
-}
 
 function goHome() {
   document.getElementById('home').style.display = 'flex';
@@ -1600,10 +1587,10 @@ function resetFlash() {
 }
 
 // ════════════════════════════════════════════════════
-// USER & RANKING SYSTEM — SHARED CLOUD STORAGE
+// USER & RANKING SYSTEM — FIREBASE REALTIME DATABASE
 // ════════════════════════════════════════════════════
 
-const CLOUD_KEY = 'redes_cisco_users_v1';
+const FB_URL = 'https://redes-de-datos-c845e-default-rtdb.firebaseio.com';
 const CURRENT_USER_KEY = 'redesCurrentUser';
 
 const AVATAR_COLORS = [
@@ -1617,29 +1604,41 @@ const AVATAR_COLORS = [
   'linear-gradient(135deg,#45aaf2,#2d98da)',
 ];
 
-// ── Cloud read/write helpers ──────────────────────
-async function cloudGet() {
+function userKey(name) {
+  return name.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_áéíóúñü]/gi,'');
+}
+
+async function dbRead() {
   try {
-    const res = await window.storage.get(CLOUD_KEY, true);
-    return res ? JSON.parse(res.value) : {};
+    const r = await fetch(`${FB_URL}/users.json`);
+    if (!r.ok) return {};
+    const data = await r.json();
+    return data || {};
   } catch { return {}; }
 }
 
-async function cloudSet(data) {
+async function dbWriteUser(key, data) {
   try {
-    await window.storage.set(CLOUD_KEY, JSON.stringify(data), true);
-  } catch(e) { console.warn('cloud save failed', e); }
+    await fetch(`${FB_URL}/users/${key}.json`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  } catch(e) { console.warn('Firebase write failed:', e); }
 }
 
-// Local cache to avoid blocking the UI on every answer
-let _usersCache = null;
-async function getUsers() {
-  if (!_usersCache) _usersCache = await cloudGet();
-  return _usersCache;
+async function dbDeleteUser(key) {
+  try {
+    await fetch(`${FB_URL}/users/${key}.json`, { method: 'DELETE' });
+  } catch(e) { console.warn('Firebase delete failed:', e); }
 }
-async function saveUsers(users) {
-  _usersCache = users;
-  await cloudSet(users);
+
+let _usersCache = null;
+
+async function getUsers() {
+  const data = await dbRead();
+  _usersCache = data;
+  return _usersCache;
 }
 
 function getCurrentUser() {
@@ -1659,57 +1658,66 @@ function getInitials(name) {
 }
 
 async function ensureUser(name) {
-  const users = await getUsers();
-  if (!users[name]) users[name] = { correct:0, wrong:0, total:0, byModule:{} };
-  await saveUsers(users);
-  return users[name];
+  const key = userKey(name);
+  const existing = await fetch(`${FB_URL}/users/${key}.json`).then(r=>r.json()).catch(()=>null);
+  if (!existing) {
+    const newUser = { displayName: name, correct:0, wrong:0, total:0, byModule:{} };
+    await dbWriteUser(key, newUser);
+    if (!_usersCache) _usersCache = {};
+    _usersCache[key] = newUser;
+  } else {
+    if (!_usersCache) _usersCache = {};
+    _usersCache[key] = existing;
+  }
 }
 
-// Called after each answered question
 async function recordAnswer(isCorrect, module) {
   const user = getCurrentUser();
   if (!user) return;
-  // Reload from cloud to avoid overwriting concurrent changes
-  _usersCache = await cloudGet();
-  const users = _usersCache;
-  if (!users[user]) users[user] = { correct:0, wrong:0, total:0, byModule:{} };
-  users[user].total++;
-  if (isCorrect) users[user].correct++; else users[user].wrong++;
-  if (!users[user].byModule[module]) users[user].byModule[module] = {correct:0, wrong:0, total:0};
-  users[user].byModule[module].total++;
-  if (isCorrect) users[user].byModule[module].correct++;
-  else users[user].byModule[module].wrong++;
-  await saveUsers(users);
+  const key = userKey(user);
+  const current = await fetch(`${FB_URL}/users/${key}.json`).then(r=>r.json()).catch(()=>null)
+    || { displayName: user, correct:0, wrong:0, total:0, byModule:{} };
+  current.total = (current.total||0) + 1;
+  if (isCorrect) current.correct = (current.correct||0) + 1;
+  else current.wrong = (current.wrong||0) + 1;
+  if (!current.byModule) current.byModule = {};
+  if (!current.byModule[module]) current.byModule[module] = { correct:0, wrong:0, total:0 };
+  current.byModule[module].total++;
+  if (isCorrect) current.byModule[module].correct++;
+  else current.byModule[module].wrong++;
+  await dbWriteUser(key, current);
+  if (_usersCache) _usersCache[key] = current;
+  updateHomeStats();
 }
 
 // ── Open user selector modal ──────────────────────
 async function openUserModal() {
   setLoading(true);
   const users = await getUsers();
-  _usersCache = users;
   setLoading(false);
 
-  const names = Object.keys(users);
   const listEl = document.getElementById('userList');
   document.getElementById('newUserInput').value = '';
   const currentUser = getCurrentUser();
+  const entries = Object.entries(users);
 
-  if (names.length === 0) {
+  if (entries.length === 0) {
     listEl.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;text-align:center;padding:12px">No hay usuarios todavía. ¡Creá el primero!</div>';
   } else {
-    listEl.innerHTML = names.map(name => {
-      const u = users[name];
+    listEl.innerHTML = entries.map(([key, u]) => {
+      const name = u.displayName || key;
       const pct = u.total > 0 ? Math.round(u.correct/u.total*100) : 0;
       const isCurrent = name === currentUser;
-      return `<div class="user-btn${isCurrent?' user-btn-active':''}" onclick="loginUser('${name.replace(/'/g,"\\'")}')">
+      const safe = name.replace(/'/g,"\\'");
+      return `<div class="user-btn${isCurrent?' user-btn-active':''}" onclick="loginUser('${safe}')">
         <div class="user-avatar" style="background:${getUserColor(name)}">${getInitials(name)}</div>
         <div class="user-info">
           <div class="user-name">${name}${isCurrent?' <span style="font-size:0.7rem;color:var(--accent);font-weight:700">activo</span>':''}</div>
           <div class="user-stats-mini">${u.total} respondidas · ${pct}% precisión</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
-          <button class="icon-btn" title="Reiniciar progreso" onclick="event.stopPropagation();confirmReset('${name.replace(/'/g,"\\'")}')">↺</button>
-          <button class="icon-btn icon-btn-danger" title="Eliminar usuario" onclick="event.stopPropagation();confirmDelete('${name.replace(/'/g,"\\'")}')">✕</button>
+          <button class="icon-btn" title="Reiniciar progreso" onclick="event.stopPropagation();confirmReset('${safe}')">↺</button>
+          <button class="icon-btn icon-btn-danger" title="Eliminar usuario" onclick="event.stopPropagation();confirmDelete('${safe}')">✕</button>
         </div>
       </div>`;
     }).join('');
@@ -1736,8 +1744,6 @@ async function createUser() {
   const name = input.value.trim();
   if (!name) { input.focus(); return; }
   if (name.length < 2) { showToast('El nombre debe tener al menos 2 caracteres'); return; }
-  const users = await getUsers();
-  if (users[name]) { showToast(`El usuario "${name}" ya existe`); loginUser(name); return; }
   await ensureUser(name);
   loginUser(name);
 }
@@ -1747,8 +1753,7 @@ function confirmReset(name) {
   showConfirm(
     `¿Reiniciar el progreso de <strong>${name}</strong>?`,
     'Se borrarán todas sus estadísticas. No se puede deshacer.',
-    () => resetUserProgress(name),
-    'Reiniciar', 'btn-danger'
+    () => resetUserProgress(name), 'Reiniciar', 'btn-danger'
   );
 }
 
@@ -1756,25 +1761,24 @@ function confirmDelete(name) {
   showConfirm(
     `¿Eliminar al usuario <strong>${name}</strong>?`,
     'Se borrarán su cuenta y todo su progreso permanentemente.',
-    () => deleteUser(name),
-    'Eliminar', 'btn-danger'
+    () => deleteUser(name), 'Eliminar', 'btn-danger'
   );
 }
 
 async function resetUserProgress(name) {
-  const users = await getUsers();
-  if (!users[name]) return;
-  users[name] = { correct:0, wrong:0, total:0, byModule:{} };
-  await saveUsers(users);
+  const key = userKey(name);
+  const resetData = { displayName: name, correct:0, wrong:0, total:0, byModule:{} };
+  await dbWriteUser(key, resetData);
+  if (_usersCache) _usersCache[key] = resetData;
   showToast(`↺ Progreso de ${name} reiniciado`);
   openUserModal();
   if (getCurrentUser() === name) updateHomeStats();
 }
 
 async function deleteUser(name) {
-  const users = await getUsers();
-  delete users[name];
-  await saveUsers(users);
+  const key = userKey(name);
+  await dbDeleteUser(key);
+  if (_usersCache) delete _usersCache[key];
   if (getCurrentUser() === name) {
     localStorage.removeItem(CURRENT_USER_KEY);
     updateUserChip();
@@ -1816,15 +1820,19 @@ function updateUserChip() {
 async function showRanking() {
   showScreen('rankingScreen');
   document.getElementById('rankingList').innerHTML = '<div style="text-align:center;color:var(--text2);padding:32px">⏳ Cargando ranking...</div>';
-  _usersCache = await cloudGet();
+  await getUsers();
   buildRanking();
 }
 
 function buildRanking() {
   const users = _usersCache || {};
   const currentUser = getCurrentUser();
-  const entries = Object.entries(users).map(([name, data]) => ({name, ...data}));
-  entries.sort((a, b) => b.correct - a.correct);
+  const entries = Object.entries(users).map(([key, data]) => ({
+    key,
+    name: data.displayName || key,
+    ...data
+  }));
+  entries.sort((a, b) => (b.correct||0) - (a.correct||0));
 
   const listEl = document.getElementById('rankingList');
   if (entries.length === 0) {
@@ -1845,7 +1853,8 @@ function buildRanking() {
     const rankClass = i < 3 ? `rank-${i+1}` : '';
     const currentClass = u.name === currentUser ? 'current-user' : '';
     const posLabel = i < 3 ? medals[i] : `#${i+1}`;
-    return `<div class="rank-card ${rankClass} ${currentClass}" onclick="showBreakdown('${u.name.replace(/'/g,"\\'")}')">
+    const safe = u.name.replace(/'/g,"\\'");
+    return `<div class="rank-card ${rankClass} ${currentClass}" onclick="showBreakdown('${safe}')">
       <div class="rank-pos">${posLabel}</div>
       <div class="rank-avatar" style="background:${getUserColor(u.name)}">${getInitials(u.name)}</div>
       <div class="rank-info">
@@ -1863,13 +1872,15 @@ function buildRanking() {
 
 function showBreakdown(name) {
   const users = _usersCache || {};
-  const u = users[name];
+  const key = userKey(name);
+  const u = users[key];
   if (!u) return;
   const pct = u.total > 0 ? Math.round(u.correct/u.total*100) : 0;
   const mods = Object.entries(u.byModule || {}).sort((a,b) => b[1].correct - a[1].correct);
-  const maxMod = Math.max(mods.reduce((m,[,v]) => Math.max(m, v.correct), 1), 1);
+  const maxMod = Math.max(mods.reduce((m,[,v]) => Math.max(m, v.correct||0), 1), 1);
   const currentUser = getCurrentUser();
   const isMe = name === currentUser;
+  const safe = name.replace(/'/g,"\\'");
 
   const modRows = mods.length > 0 ? mods.map(([mod, data]) => {
     const mPct = data.total > 0 ? Math.round(data.correct/data.total*100) : 0;
@@ -1891,8 +1902,8 @@ function showBreakdown(name) {
         </div>
       </div>
       ${isMe ? `<div style="display:flex;gap:8px">
-        <button class="btn btn-secondary" style="padding:7px 12px;font-size:0.8rem" onclick="document.getElementById('breakdownModal').style.display='none';confirmReset('${name.replace(/'/g,"\\'")}')">↺ Reiniciar</button>
-        <button class="btn btn-danger" style="padding:7px 12px;font-size:0.8rem" onclick="document.getElementById('breakdownModal').style.display='none';confirmDelete('${name.replace(/'/g,"\\'")}')">✕ Eliminar</button>
+        <button class="btn btn-secondary" style="padding:7px 12px;font-size:0.8rem" onclick="document.getElementById('breakdownModal').style.display='none';confirmReset('${safe}')">↺ Reiniciar</button>
+        <button class="btn btn-danger" style="padding:7px 12px;font-size:0.8rem" onclick="document.getElementById('breakdownModal').style.display='none';confirmDelete('${safe}')">✕ Eliminar</button>
       </div>` : ''}
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
@@ -1906,12 +1917,28 @@ function showBreakdown(name) {
   document.getElementById('breakdownModal').style.display = 'flex';
 }
 
+// ── Home stats ────────────────────────────────────
+async function updateHomeStats() {
+  const user = getCurrentUser();
+  let correct = 0, total = 0;
+  if (user && _usersCache) {
+    const key = userKey(user);
+    const u = _usersCache[key] || { correct:0, total:0 };
+    correct = u.correct || 0; total = u.total || 0;
+  }
+  document.getElementById('homeStats').innerHTML = `
+    <div class="stat"><div class="stat-num">${ALL_QUESTIONS.length}</div><div class="stat-label">Preguntas totales</div></div>
+    <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Respondidas${user ? ' por ti' : ''}</div></div>
+    <div class="stat"><div class="stat-num">${total > 0 ? Math.round(correct/total*100) : 0}%</div><div class="stat-label">Precisión</div></div>
+  `;
+}
+
 // ════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════
 async function init() {
   updateUserChip();
-  _usersCache = await cloudGet();
+  await getUsers();
   updateHomeStats();
   if (!getCurrentUser()) openUserModal();
 }
