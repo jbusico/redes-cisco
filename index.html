@@ -751,17 +751,12 @@
 </header>
 
 <!-- USER LOGIN MODAL -->
-<div class="modal-overlay" id="userModal">
+<div class="modal-overlay" id="userModal" style="display:none">
   <div class="modal">
     <div class="modal-icon">👤</div>
     <div class="modal-title">¿Quién está estudiando?</div>
-    <div class="modal-sub">Seleccioná tu usuario o creá uno nuevo para guardar tu progreso en el ranking.</div>
+    <div class="modal-sub">Elegí tu perfil para guardar tu progreso en el ranking.</div>
     <div class="user-list" id="userList"></div>
-    <div class="divider-or">o ingresá un nombre nuevo</div>
-    <div class="input-row">
-      <input class="text-input" id="newUserInput" type="text" placeholder="Tu nombre..." maxlength="20" onkeydown="if(event.key==='Enter') createUser()">
-      <button class="btn btn-primary" onclick="createUser()">Entrar</button>
-    </div>
   </div>
 </div>
 
@@ -1227,6 +1222,7 @@ let quizIndex = 0;
 let quizCorrect = 0;
 let quizWrong = 0;
 let wrongQuestions = [];
+let quizModuleStats = {};
 let answered = false;
 let isRepasoMode = false;
 let activeModule = 'all';
@@ -1491,7 +1487,7 @@ function startRepaso() {
   document.getElementById('repassoBadge').style.display = 'flex';
   quizQuestions = shuffle(wrongQuestions);
   quizIndex = 0; quizCorrect = 0; quizWrong = 0;
-  wrongQuestions = [];
+  wrongQuestions = []; quizModuleStats = {};
   renderQuestion();
 }
 
@@ -1499,7 +1495,7 @@ function startQuizWithModule(mod) {
   const pool = mod === 'all' ? ALL_QUESTIONS : getFiltered(mod);
   quizQuestions = shuffle(pool);
   quizIndex = 0; quizCorrect = 0; quizWrong = 0;
-  wrongQuestions = [];
+  wrongQuestions = []; quizModuleStats = {};
   renderQuestion();
 }
 
@@ -1575,12 +1571,11 @@ function selectAnswer(selected, idx) {
 
   document.getElementById('nextBtn').disabled = false;
 
-  // Save progress (global + per user)
-  const s = JSON.parse(localStorage.getItem('redesProgress') || '{"correct":0,"wrong":0,"total":0}');
-  s.total += 1;
-  if (isCorrect) s.correct += 1; else s.wrong += 1;
-  localStorage.setItem('redesProgress', JSON.stringify(s));
-  recordAnswer(isCorrect, q.module);
+  // Track stats in memory for this quiz run (saved to Firebase at end)
+  if (!quizModuleStats[q.module]) quizModuleStats[q.module] = {correct:0, wrong:0, total:0};
+  quizModuleStats[q.module].total++;
+  if (isCorrect) quizModuleStats[q.module].correct++;
+  else quizModuleStats[q.module].wrong++;
 
   document.getElementById('chipCorrect').textContent = `✓ ${quizCorrect} correctas`;
   document.getElementById('chipWrong').textContent = `✗ ${quizWrong} incorrectas`;
@@ -1616,6 +1611,8 @@ function showResults() {
   document.getElementById('rWrong').textContent = quizWrong;
   document.getElementById('rPct').textContent = pct + '%';
   document.getElementById('repasoBtn').style.display = wrongQuestions.length > 0 ? 'flex' : 'none';
+
+  recordQuizRun(quizCorrect, quizWrong);
 }
 
 // ════════════════════════════════════════════════════
@@ -1686,6 +1683,7 @@ function resetFlash() {
 
 const FB_URL = 'https://redes-de-datos-c845e-default-rtdb.firebaseio.com';
 const CURRENT_USER_KEY = 'redesCurrentUser';
+const PREDEFINED_USERS = ['Juli', 'Palo'];
 
 const AVATAR_COLORS = [
   'linear-gradient(135deg,#4f7cff,#7ba4ff)',
@@ -1765,63 +1763,68 @@ async function ensureUser(name) {
   }
 }
 
-async function recordAnswer(isCorrect, module) {
+async function recordQuizRun(correct, wrong) {
   const user = getCurrentUser();
   if (!user) return;
   const key = userKey(user);
-  const current = await fetch(`${FB_URL}/users/${key}.json`).then(r=>r.json()).catch(()=>null)
-    || { displayName: user, correct:0, wrong:0, total:0, byModule:{} };
-  current.total = (current.total||0) + 1;
-  if (isCorrect) current.correct = (current.correct||0) + 1;
-  else current.wrong = (current.wrong||0) + 1;
+  const total = correct + wrong;
+  if (total === 0) return;
+  const pct = Math.round(correct / total * 100);
+
+  const current = (_usersCache && _usersCache[key])
+    ? { ..._usersCache[key] }
+    : { displayName: user, correct:0, wrong:0, total:0, byModule:{}, bestPct:0, bestCorrect:0, bestTotal:0 };
+
+  // Acumular totales históricos
+  current.total = (current.total||0) + total;
+  current.correct = (current.correct||0) + correct;
+  current.wrong = (current.wrong||0) + wrong;
+
+  // Actualizar mejor resultado solo si este run supera el anterior
+  if (pct > (current.bestPct||0)) {
+    current.bestPct = pct;
+    current.bestCorrect = correct;
+    current.bestTotal = total;
+  }
+
+  // Acumular stats por módulo (de la sesión actual)
   if (!current.byModule) current.byModule = {};
-  if (!current.byModule[module]) current.byModule[module] = { correct:0, wrong:0, total:0 };
-  current.byModule[module].total++;
-  if (isCorrect) current.byModule[module].correct++;
-  else current.byModule[module].wrong++;
+  for (const [mod, stats] of Object.entries(quizModuleStats)) {
+    if (!current.byModule[mod]) current.byModule[mod] = { correct:0, wrong:0, total:0 };
+    current.byModule[mod].total += stats.total;
+    current.byModule[mod].correct += stats.correct;
+    current.byModule[mod].wrong += stats.wrong;
+  }
+
   await dbWriteUser(key, current);
-  if (_usersCache) _usersCache[key] = current;
+  if (!_usersCache) _usersCache = {};
+  _usersCache[key] = current;
   updateHomeStats();
 }
 
 // ── Open user selector modal ──────────────────────
 async function openUserModal() {
-  setLoading(true);
-  const users = await getUsers();
-  setLoading(false);
-
   const listEl = document.getElementById('userList');
-  document.getElementById('newUserInput').value = '';
-  const currentUser = getCurrentUser();
-  const entries = Object.entries(users);
-
-  if (entries.length === 0) {
-    listEl.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;text-align:center;padding:12px">No hay usuarios todavía. ¡Creá el primero!</div>';
-  } else {
-    listEl.innerHTML = entries.map(([key, u]) => {
-      const name = u.displayName || key;
-      const pct = u.total > 0 ? Math.round(u.correct/u.total*100) : 0;
-      const isCurrent = name === currentUser;
-      const safe = name.replace(/'/g,"\\'");
-      return `<div class="user-btn${isCurrent?' user-btn-active':''}" onclick="loginUser('${safe}')">
-        <div class="user-avatar" style="background:${getUserColor(name)}">${getInitials(name)}</div>
-        <div class="user-info">
-          <div class="user-name">${name}${isCurrent?' <span style="font-size:0.7rem;color:var(--accent);font-weight:700">activo</span>':''}</div>
-          <div class="user-stats-mini">${u.total} respondidas · ${pct}% precisión</div>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <button class="icon-btn" title="Reiniciar progreso" onclick="event.stopPropagation();confirmReset('${safe}')">↺</button>
-          <button class="icon-btn icon-btn-danger" title="Eliminar usuario" onclick="event.stopPropagation();confirmDelete('${safe}')">✕</button>
-        </div>
-      </div>`;
-    }).join('');
-  }
+  listEl.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;text-align:center;padding:16px">⏳ Cargando...</div>';
   document.getElementById('userModal').style.display = 'flex';
-}
 
-function setLoading(on) {
-  const list = document.getElementById('userList');
-  if (on) list.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;text-align:center;padding:16px">⏳ Cargando usuarios...</div>';
+  await getUsers();
+  const currentUser = getCurrentUser();
+
+  listEl.innerHTML = PREDEFINED_USERS.map(name => {
+    const key = userKey(name);
+    const u = (_usersCache && _usersCache[key]) || { correct:0, wrong:0, total:0, bestPct:0 };
+    const isCurrent = name === currentUser;
+    const bestPct = u.bestPct || 0;
+    const safe = name.replace(/'/g,"\\'");
+    return `<div class="user-btn${isCurrent?' user-btn-active':''}" onclick="loginUser('${safe}')">
+      <div class="user-avatar" style="background:${getUserColor(name)}">${getInitials(name)}</div>
+      <div class="user-info">
+        <div class="user-name">${name}${isCurrent?' <span style="font-size:0.7rem;color:var(--accent);font-weight:700">activo</span>':''}</div>
+        <div class="user-stats-mini">${u.total} respondidas · Mejor: ${bestPct}%</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function loginUser(name) {
@@ -1861,7 +1864,7 @@ function confirmDelete(name) {
 
 async function resetUserProgress(name) {
   const key = userKey(name);
-  const resetData = { displayName: name, correct:0, wrong:0, total:0, byModule:{} };
+  const resetData = { displayName: name, correct:0, wrong:0, total:0, byModule:{}, bestPct:0, bestCorrect:0, bestTotal:0 };
   await dbWriteUser(key, resetData);
   if (_usersCache) _usersCache[key] = resetData;
   showToast(`↺ Progreso de ${name} reiniciado`);
@@ -1921,44 +1924,40 @@ async function showRanking() {
 function buildRanking() {
   const users = _usersCache || {};
   const currentUser = getCurrentUser();
-  const entries = Object.entries(users).map(([key, data]) => ({
-    key,
-    name: data.displayName || key,
-    ...data
-  }));
-  entries.sort((a, b) => (b.correct||0) - (a.correct||0));
+  // Mostrar solo Juli y Palo, en el orden del ranking
+  const entries = PREDEFINED_USERS.map(name => {
+    const key = userKey(name);
+    const data = users[key] || { displayName: name, correct:0, wrong:0, total:0, bestPct:0, bestCorrect:0, bestTotal:0 };
+    return { key, name, ...data };
+  });
+  // Ordenar por mejor porcentaje; empate: por más correctas en el mejor run
+  entries.sort((a, b) => {
+    const diff = (b.bestPct||0) - (a.bestPct||0);
+    return diff !== 0 ? diff : (b.bestCorrect||0) - (a.bestCorrect||0);
+  });
 
   const listEl = document.getElementById('rankingList');
-  if (entries.length === 0) {
-    listEl.innerHTML = `<div style="text-align:center;color:var(--text2);padding:40px 0">
-      <div style="font-size:3rem;margin-bottom:16px">🏜️</div>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:8px">El ranking está vacío</div>
-      <div style="font-size:0.88rem">¡Creá un usuario y empezá a practicar!</div>
-    </div>`;
-    return;
-  }
-
-  const medals = ['🥇','🥈','🥉'];
-  const maxCorrect = Math.max(entries[0]?.correct || 1, 1);
+  const medals = ['🥇','🥈'];
 
   listEl.innerHTML = entries.map((u, i) => {
-    const pct = u.total > 0 ? Math.round(u.correct/u.total*100) : 0;
-    const barW = Math.round((u.correct/maxCorrect)*100);
-    const rankClass = i < 3 ? `rank-${i+1}` : '';
+    const bestPct = u.bestPct || 0;
+    const bestCorrect = u.bestCorrect || 0;
+    const bestTotal = u.bestTotal || 0;
+    const rankClass = i < 2 ? `rank-${i+1}` : '';
     const currentClass = u.name === currentUser ? 'current-user' : '';
-    const posLabel = i < 3 ? medals[i] : `#${i+1}`;
+    const posLabel = medals[i] || `#${i+1}`;
     const safe = u.name.replace(/'/g,"\\'");
     return `<div class="rank-card ${rankClass} ${currentClass}" onclick="showBreakdown('${safe}')">
       <div class="rank-pos">${posLabel}</div>
       <div class="rank-avatar" style="background:${getUserColor(u.name)}">${getInitials(u.name)}</div>
       <div class="rank-info">
         <div class="rank-name">${u.name}${u.name === currentUser ? ' <span style="font-size:0.7rem;color:var(--accent);font-weight:600">TÚ</span>' : ''}</div>
-        <div class="rank-detail">${u.total} respondidas · ${pct}% precisión · ✗ ${u.wrong} errores</div>
-        <div class="rank-bar-wrap"><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${barW}%"></div></div></div>
+        <div class="rank-detail">${u.total} respondidas en total · Mejor run: ${bestCorrect}/${bestTotal}</div>
+        <div class="rank-bar-wrap"><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${bestPct}%"></div></div></div>
       </div>
       <div class="rank-score-wrap">
-        <div class="rank-score-num">${u.correct}</div>
-        <div class="rank-score-label">correctas</div>
+        <div class="rank-score-num">${bestPct}%</div>
+        <div class="rank-score-label">mejor resultado</div>
       </div>
     </div>`;
   }).join('');
@@ -1992,18 +1991,15 @@ function showBreakdown(name) {
         <div class="rank-avatar" style="background:${getUserColor(name)};width:48px;height:48px;font-size:1.1rem">${getInitials(name)}</div>
         <div>
           <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem">${name}</div>
-          <div style="color:var(--text2);font-size:0.85rem">${u.total} preguntas · ${pct}% precisión</div>
+          <div style="color:var(--text2);font-size:0.85rem">${u.total} preguntas · Mejor: ${u.bestPct||0}%</div>
         </div>
       </div>
-      ${isMe ? `<div style="display:flex;gap:8px">
-        <button class="btn btn-secondary" style="padding:7px 12px;font-size:0.8rem" onclick="document.getElementById('breakdownModal').style.display='none';confirmReset('${safe}')">↺ Reiniciar</button>
-        <button class="btn btn-danger" style="padding:7px 12px;font-size:0.8rem" onclick="document.getElementById('breakdownModal').style.display='none';confirmDelete('${safe}')">✕ Eliminar</button>
-      </div>` : ''}
+      ${isMe ? `<button class="btn btn-secondary" style="padding:7px 12px;font-size:0.8rem" onclick="document.getElementById('breakdownModal').style.display='none';confirmReset('${safe}')">↺ Reiniciar</button>` : ''}
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
       <div class="result-box"><div class="result-box-num" style="color:var(--correct)">${u.correct}</div><div class="result-box-label">Correctas</div></div>
       <div class="result-box"><div class="result-box-num" style="color:var(--wrong)">${u.wrong}</div><div class="result-box-label">Incorrectas</div></div>
-      <div class="result-box"><div class="result-box-num" style="color:var(--accent)">${pct}%</div><div class="result-box-label">Precisión</div></div>
+      <div class="result-box"><div class="result-box-num" style="color:var(--accent)">${u.bestPct||0}%</div><div class="result-box-label">Mejor resultado</div></div>
     </div>
     <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase">Desglose por Módulo</div>
     <div class="breakdown-list">${modRows}</div>
@@ -2014,16 +2010,17 @@ function showBreakdown(name) {
 // ── Home stats ────────────────────────────────────
 async function updateHomeStats() {
   const user = getCurrentUser();
-  let correct = 0, total = 0;
+  let total = 0, bestPct = 0;
   if (user && _usersCache) {
     const key = userKey(user);
-    const u = _usersCache[key] || { correct:0, total:0 };
-    correct = u.correct || 0; total = u.total || 0;
+    const u = _usersCache[key] || {};
+    total = u.total || 0;
+    bestPct = u.bestPct || 0;
   }
   document.getElementById('homeStats').innerHTML = `
     <div class="stat"><div class="stat-num">${ALL_QUESTIONS.length}</div><div class="stat-label">Preguntas totales</div></div>
-    <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Respondidas${user ? ' por ti' : ''}</div></div>
-    <div class="stat"><div class="stat-num">${total > 0 ? Math.round(correct/total*100) : 0}%</div><div class="stat-label">Precisión</div></div>
+    <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Respondidas${user ? ' por vos' : ''}</div></div>
+    <div class="stat"><div class="stat-num">${bestPct}%</div><div class="stat-label">Mejor resultado</div></div>
   `;
 }
 
@@ -2033,6 +2030,10 @@ async function updateHomeStats() {
 async function init() {
   updateUserChip();
   await getUsers();
+  // Crear Juli y Palo en Firebase si no existen
+  for (const name of PREDEFINED_USERS) {
+    await ensureUser(name);
+  }
   updateHomeStats();
   if (!getCurrentUser()) openUserModal();
 }
