@@ -514,6 +514,12 @@
     background: rgba(79,124,255,0.1); border-color: rgba(79,124,255,0.4); color: var(--accent); font-weight: 600;
   }
   .filter-chip.group-select.active, .filter-chip.group-select:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .filter-section-header {
+    font-size: 0.68rem; font-weight: 700; color: var(--text3);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 10px 2px 4px; display: flex; align-items: center; gap: 8px;
+  }
+  .filter-section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
   /* ── REPASO MODE ── */
   .repaso-badge {
@@ -1152,6 +1158,65 @@ const ALL_QUESTIONS = [
   { module: "PPC", q: "¿Cuál es la estructura de una dirección IPv4?", correct: "Formato decimal punteado", wrong: ["Formato hexadecimal","Formato binario","Formato octal"], explanation: "Una dirección IPv4 se representa mediante cuatro números entre 0 y 255 separados por puntos (ej: 192.168.1.1)." },
   { module: "PPC", q: "¿Qué tipo de interfaz no tiene puerto físico?", correct: "SVI (Interfaz Virtual de Switch)", wrong: ["Interfaz FastEthernet","Interfaz GigabitEthernet","Interfaz serial"], explanation: "La SVI es una interfaz virtual creada en el switch para administración o comunicación entre VLANs, sin ningún puerto físico asociado." },
   { module: "PPC", q: "¿Qué memoria pierde su contenido al reiniciar el dispositivo?", correct: "RAM (Memoria de Acceso Aleatorio)", wrong: ["NVRAM","Flash","ROM"], explanation: "La RAM es una memoria volátil que necesita energía para conservar la información y se borra completamente al reiniciar el dispositivo." },
+
+  // ════════════════════════════════════════════════════════
+  // SEGUNDO PARCIAL — CUESTIONARIO 1 (10 preguntas)
+  // ════════════════════════════════════════════════════════
+  { module: "SP.C1", q: "¿Cuál es el comando recomendado para proporcionar el nivel más alto de seguridad al acceso del modo EXEC privilegiado en un router Cisco?", correct: "enable secret", wrong: ["service password-encryption","enable password","login block-for"], explanation: "Este comando utiliza un algoritmo de cifrado fuerte para proteger la contraseña de acceso al modo de mayor privilegio del dispositivo." },
+  { module: "SP.C1", q: "Un administrador de red necesita recibir correos electrónicos en múltiples dispositivos y mantenerlos sincronizados en el servidor. ¿Qué protocolo es el más adecuado?", correct: "IMAP", wrong: ["POP3","SMTP","HTTP"], explanation: "IMAP permite gestionar los mensajes directamente en el servidor, lo que garantiza que los cambios se reflejen en todos los dispositivos conectados." },
+  { module: "SP.C1", q: "¿Qué campo del encabezado UDP permite detectar errores básicos en el datagrama?", correct: "Suma de comprobación (Checksum)", wrong: ["Puerto de origen","Longitud","Número de secuencia"], explanation: "Es el campo de 16 bits encargado de verificar la integridad del encabezado y los datos, aunque UDP no garantiza la corrección de errores." },
+  { module: "SP.C1", q: "En el modelo AAA, ¿qué función se encarga de registrar las acciones que realiza un usuario mientras está conectado a la red?", correct: "Contabilidad (Registro)", wrong: ["Cifrado","Autorización","Autenticación"], explanation: "La función de 'Accounting' recolecta datos sobre el uso de recursos y las acciones realizadas, facilitando auditorías y seguimientos de seguridad." },
+  { module: "SP.C1", q: "Un técnico sospecha que un nodo específico en el camino hacia un destino está retrasando los paquetes. ¿Qué herramienta de diagnóstico debe utilizar para identificar este nodo?", correct: "traceroute", wrong: ["ping","nslookup","show ip route"], explanation: "Esta utilidad aprovecha los mensajes ICMP de tiempo excedido para listar cada router intermedio y los tiempos de respuesta de cada uno." },
+  { module: "SP.C1", q: "¿Cuál es la característica principal que define a un 'Gusano' (Worm) en comparación con otros tipos de malware?", correct: "Es autónomo y se propaga solo por la red", wrong: ["Necesita un programa anfitrión para activarse","Se disfraza de software legítimo para engañar al usuario","Requiere acceso físico al hardware para infectar"], explanation: "Los gusanos pueden replicarse y explotar vulnerabilidades de forma automática sin necesidad de que el usuario ejecute un archivo." },
+  { module: "SP.C1", q: "Durante el establecimiento de una sesión TCP, ¿cuál es el orden correcto de los mensajes en el proceso 'Three-Way Handshake'?", correct: "SYN, SYN-ACK, ACK", wrong: ["ACK, SYN, SYN-ACK","HELO, SYN, ACK","SYN, ACK, FIN"], explanation: "El cliente inicia con un SYN, el servidor responde con SYN-ACK para sincronizar y reconocer, y finalmente el cliente envía un ACK." },
+  { module: "SP.C1", q: "¿Por qué un administrador de red configuraría una SVI (Switch Virtual Interface) en un switch de Capa 2?", correct: "Para permitir la administración remota mediante una dirección IP", wrong: ["Para permitir que el switch tome decisiones de enrutamiento","Para cifrar el tráfico de datos que pasa por el switch","Para conectar físicamente dispositivos finales al switch"], explanation: "La SVI proporciona una interfaz lógica donde se asigna una IP para acceder al switch vía SSH o Telnet desde otras redes." },
+  { module: "SP.C1", q: "¿Qué tipo de ataque de red tiene como objetivo principal la detección y esquematización de sistemas mediante herramientas como escaneo de puertos?", correct: "Ataque de reconocimiento", wrong: ["Ataque de acceso","Denegación de servicio (DoS)","Man-in-the-Middle"], explanation: "Este tipo de ataque se enfoca en mapear la red, identificar hosts activos y servicios disponibles para preparar ataques posteriores." },
+  { module: "SP.C1", q: "En el contexto de DNS, ¿qué tipo de registro se utiliza para mapear un nombre de dominio a una dirección IPv6?", correct: "Registro AAAA", wrong: ["Registro NS","Registro MX","Registro A"], explanation: "El registro 'Quad-A' asocia nombres de dominio con direcciones de 128 bits, permitiendo la resolución en redes IPv6." },
+
+  // ════════════════════════════════════════════════════════
+  // SEGUNDO PARCIAL — CUESTIONARIO 2 (12 preguntas)
+  // ════════════════════════════════════════════════════════
+  { module: "SP.C2", q: "¿Qué comando se debe utilizar para asegurar que todas las contraseñas configuradas en texto plano no sean legibles al visualizar el archivo de configuración?", correct: "service password-encryption", wrong: ["encrypt-all passwords","password cisco","enable secret"], explanation: "Este comando aplica un cifrado de tipo débil a todas las contraseñas actuales y futuras que se encuentren en el archivo de configuración en ejecución." },
+  { module: "SP.C2", q: "En un entorno IPv6, ¿qué mensaje ICMPv6 utiliza un dispositivo para determinar la dirección MAC de un vecino en la red local?", correct: "Neighbor Solicitation", wrong: ["Router Solicitation","Echo Request","Neighbor Advertisement"], explanation: "El mensaje NS reemplaza la función de ARP en IPv4, permitiendo descubrir la dirección de capa 2 asociada a una dirección IPv6." },
+  { module: "SP.C2", q: "Si un paquete IP llega a un router con un valor de TTL = 1, ¿qué acción realizará el router y qué mensaje enviará de vuelta?", correct: "Descarta el paquete y envía un mensaje ICMP de Tiempo Excedido.", wrong: ["Reenvía el paquete y reduce el TTL a 0.","Incrementa el TTL para permitir que llegue a su destino.","Descarta el paquete y envía un mensaje de Destino Inalcanzable."], explanation: "Al procesar el paquete, el router reduce el TTL a 0, lo que provoca el descarte para evitar bucles y genera el aviso correspondiente al origen." },
+  { module: "SP.C2", q: "¿Cuál es el propósito principal del campo 'Número de Secuencia' en el encabezado de un segmento TCP?", correct: "Permitir el rearmado de los datos en el orden correcto en el destino.", wrong: ["Identificar la aplicación de origen que envía los datos.","Garantizar que los datos no hayan sido alterados durante el tránsito.","Establecer la velocidad de transmisión entre el emisor y el receptor."], explanation: "TCP utiliza estos números para asegurar que los fragmentos que llegan desordenados puedan ser reconstruidos fielmente al flujo original." },
+  { module: "SP.C2", q: "¿Qué protocolo de la capa de transporte es el más adecuado para aplicaciones de streaming de video en vivo donde la baja latencia es crítica?", correct: "UDP", wrong: ["ICMP","HTTP","TCP"], explanation: "Debido a su baja sobrecarga y falta de retransmisiones, UDP permite un flujo constante de datos sin los retrasos que introduciría la recuperación de errores de TCP." },
+  { module: "SP.C2", q: "Un usuario está navegando por la web y su PC utiliza el puerto de origen 52000 para conectarse a un servidor en el puerto 443. ¿Qué puertos se verán en la respuesta que envía el servidor?", correct: "Origen: 443, Destino: 52000", wrong: ["Origen: 52000, Destino: 443","Origen: 80, Destino: 52000","Origen: 443, Destino: 80"], explanation: "En las comunicaciones de red, las respuestas del servidor siempre invierten el par de sockets de la solicitud original." },
+  { module: "SP.C2", q: "Al configurar un servidor de correo electrónico, ¿qué protocolo se debe elegir si se desea que los usuarios puedan ver exactamente las mismas carpetas y mensajes desde múltiples dispositivos?", correct: "IMAP", wrong: ["SMTP","POP3","HTTP"], explanation: "IMAP mantiene los mensajes en el servidor y sincroniza el estado de las carpetas entre todos los clientes conectados." },
+  { module: "SP.C2", q: "¿Cuál es la función del registro de recursos tipo 'MX' en una zona DNS?", correct: "Identificar los servidores responsables del intercambio de correo electrónico para un dominio.", wrong: ["Mapear un nombre de host a una dirección IPv4.","Asociar un nombre de dominio con una dirección IPv6.","Proveer la dirección IP del servidor DNS de autoridad."], explanation: "El registro Mail Exchanger (MX) dirige los correos electrónicos entrantes hacia el servidor de correo correcto." },
+  { module: "SP.C2", q: "¿Qué tipo de malware se caracteriza por ser autónomo y propagarse por la red explotando vulnerabilidades sin necesidad de que el usuario ejecute un archivo?", correct: "Gusano (Worm)", wrong: ["Ransomware","Virus","Troyano"], explanation: "A diferencia de los virus, los gusanos no necesitan intervención humana para replicarse y distribuirse a través de las conexiones de red." },
+  { module: "SP.C2", q: "En el contexto de seguridad física, ¿cuál de las siguientes opciones se clasifica como una amenaza ambiental?", correct: "Temperaturas extremas en el cuarto de servidores.", wrong: ["Picos de voltaje en la red eléctrica.","Acceso no autorizado al cableado de red.","Descargas electrostáticas al manipular equipos."], explanation: "Las fallas en los sistemas de climatización pueden provocar daños severos en los componentes electrónicos debido al calor excesivo." },
+  { module: "SP.C2", q: "¿Qué comando de Cisco IOS permite mitigar ataques de fuerza bruta bloqueando temporalmente los intentos de inicio de sesión tras varios fallos?", correct: "login block-for 30 attempts 2 within 10", wrong: ["security login-limit 10","service password-encryption","enable secret password"], explanation: "Este comando instruye al dispositivo para que deje de aceptar intentos de login si se detecta un patrón sospechoso en un intervalo de tiempo corto." },
+  { module: "SP.C2", q: "Al realizar un diagnóstico de red, ¿cuál es la principal diferencia entre los resultados obtenidos por 'ping' y los obtenidos por 'traceroute'?", correct: "Traceroute muestra cada salto intermedio (router) hasta el destino.", wrong: ["Ping mide el RTT, pero traceroute no puede medir tiempos.","Traceroute solo funciona en redes locales.","Ping utiliza TCP, mientras que traceroute utiliza ICMP."], explanation: "Mientras ping solo confirma la conectividad final, traceroute detalla la ruta exacta y ayuda a identificar fallos en nodos específicos." },
+
+  // ════════════════════════════════════════════════════════
+  // SEGUNDO PARCIAL — CUESTIONARIO 3 (25 preguntas)
+  // ════════════════════════════════════════════════════════
+  { module: "SP.C3", q: "¿Cuál es el propósito principal del comando 'service password-encryption' en la configuración de un router Cisco?", correct: "Evitar que las contraseñas se visualicen en texto plano dentro de los archivos de configuración.", wrong: ["Generar una clave maestra para proteger el acceso físico al puerto de consola.","Establecer el algoritmo de cifrado para el comando 'enable secret'.","Cifrar los datos que viajan a través de las líneas de terminal remoto (VTY)."], explanation: "Este comando aplica un cifrado débil a todas las contraseñas actuales y futuras que aparecen en la configuración en ejecución para que no sean legibles a simple vista." },
+  { module: "SP.C3", q: "Si un router arranca y entra directamente en el modo de diálogo de configuración inicial (Setup Mode), ¿cuál es la causa más probable?", correct: "La memoria NVRAM no contiene un archivo de configuración de inicio válido.", wrong: ["El administrador no ejecutó el comando 'no shutdown' en las interfaces.","El sistema operativo Cisco IOS se encuentra corrupto en la memoria Flash.","La memoria RAM ha fallado y no puede cargar el sistema operativo."], explanation: "Cuando el router no encuentra un archivo 'startup-config' en la NVRAM durante el arranque, asume que es un equipo nuevo y solicita configuración manual." },
+  { module: "SP.C3", q: "Un host envía un paquete IP con un valor de TTL (Time to Live) de 1. ¿Qué acción realizará el primer router que reciba este paquete?", correct: "Descartará el paquete y enviará un mensaje ICMP de Tiempo Excedido al origen.", wrong: ["Enviará un mensaje ICMP de Destino Inalcanzable al host de origen.","Reenviará el paquete normalmente al siguiente salto sin modificar el TTL.","Incrementará el TTL en 1 para asegurar que el paquete llegue a su destino."], explanation: "Al procesar el paquete, el router reduce el TTL a 0; dado que el paquete no puede viajar más, lo descarta y notifica al origen." },
+  { module: "SP.C3", q: "¿Cuál es la función del proceso DAD (Duplicate Address Detection) en redes IPv6?", correct: "Asegurar que la dirección IPv6 configurada sea única dentro del enlace local antes de ser utilizada.", wrong: ["Asignar automáticamente una dirección de Gateway Predeterminado al host.","Resolver la dirección MAC de un vecino a partir de su dirección IPv6.","Establecer una sesión TCP confiable entre dos dispositivos IPv6."], explanation: "DAD utiliza mensajes ICMPv6 Neighbor Solicitation para verificar que ningún otro dispositivo esté usando la misma dirección IP." },
+  { module: "SP.C3", q: "En el contexto de la Capa de Transporte, ¿qué característica define mejor al protocolo UDP?", correct: "Es un protocolo sin conexión que prioriza la baja sobrecarga y la velocidad sobre la fiabilidad.", wrong: ["Garantiza que todos los segmentos lleguen en el orden secuencial correcto al destino.","Utiliza un sistema de acuses de recibo (ACK) para gestionar la retransmisión de datos perdidos.","Establece un enlace lógico mediante un intercambio de tres vías (three-way handshake)."], explanation: "UDP no establece sesiones ni confirma la recepción de datos, lo que lo hace ideal para aplicaciones en tiempo real donde el retraso es crítico." },
+  { module: "SP.C3", q: "Durante una sesión de navegación web, un cliente envía una solicitud HTTP al puerto 80 de un servidor. ¿Qué puerto utilizará el servidor como puerto de ORIGEN al responder al cliente?", correct: "80", wrong: ["Un puerto dinámico por encima del 49152.","443","53"], explanation: "En el tráfico de respuesta, el servidor invierte los roles de los puertos, utilizando su puerto de servicio (bien conocido) como origen." },
+  { module: "SP.C3", q: "¿Cuál es la función principal de la Capa de Presentación en el modelo OSI?", correct: "Dar formato, comprimir y cifrar los datos para que sean legibles por la aplicación receptora.", wrong: ["Proporcionar la interfaz directa entre el usuario y la red de comunicación.","Segmentar los datos de la aplicación para su transporte por la red.","Establecer y mantener diálogos persistentes entre las aplicaciones de origen y destino."], explanation: "La capa 6 se encarga de que los datos tengan una sintaxis común, manejando tareas como el cifrado SSL y formatos de imagen o video." },
+  { module: "SP.C3", q: "¿Qué protocolo de correo electrónico es más adecuado para un usuario que accede a su bandeja de entrada desde múltiples dispositivos y necesita mantener sus carpetas sincronizadas?", correct: "IMAP", wrong: ["SMTP","POP3","HTTP"], explanation: "IMAP mantiene los correos en el servidor y sincroniza los cambios (leídos, borrados, carpetas) entre todos los clientes conectados." },
+  { module: "SP.C3", q: "En el proceso DHCPv4, ¿cuál es el mensaje que envía un servidor para ofrecer una dirección IP específica a un cliente que la solicitó?", correct: "DHCPOFFER", wrong: ["DHCPACK","DHCPDISCOVER","DHCPREQUEST"], explanation: "DHCPOFFER es la respuesta del servidor al mensaje DHCPDISCOVER inicial, conteniendo la configuración IP propuesta." },
+  { module: "SP.C3", q: "¿Qué tipo de ataque de red tiene como objetivo principal identificar puertos abiertos y servicios activos en un host antes de lanzar un exploit?", correct: "Ataque de Reconocimiento", wrong: ["Ataque de Malware","Ataque de Acceso","Ataque de Denegación de Servicio (DoS)"], explanation: "Los ataques de reconocimiento se utilizan para recopilar información y esquematizar la red mediante escaneos de puertos y consultas de nombres." },
+  { module: "SP.C3", q: "¿Cuál es la principal diferencia entre un virus y un gusano (worm) informático?", correct: "Un gusano puede propagarse por sí mismo a través de la red, mientras que un virus requiere que un usuario ejecute un programa infectado.", wrong: ["Los virus son ataques externos, mientras que los gusanos solo se generan por fallas internas del hardware.","Un gusano siempre se disfraza de programa legítimo, mientras que un virus es siempre visible.","Los virus solo afectan a archivos de datos, mientras que los gusanos solo afectan al sistema operativo."], explanation: "La autonomía es la clave: los gusanos explotan vulnerabilidades para saltar de sistema en sistema sin intervención humana." },
+  { module: "SP.C3", q: "Un administrador desea configurar acceso remoto seguro a un switch. ¿Por qué debería elegir SSH en lugar de Telnet?", correct: "SSH cifra todo el tráfico de la sesión, incluyendo las contraseñas, mientras que Telnet las envía en texto plano.", wrong: ["Telnet requiere una dirección IP en cada puerto físico, mientras que SSH solo requiere una SVI.","SSH no requiere una cuenta de usuario local, facilitando la administración.","SSH permite más conexiones simultáneas de usuarios que Telnet."], explanation: "La seguridad de SSH radica en su capacidad para encriptar la comunicación, evitando que atacantes con sniffers capturen credenciales." },
+  { module: "SP.C3", q: "Para implementar el servicio de nombres DNS en una red IPv6, ¿qué tipo de registro de recurso se debe crear para mapear un nombre de dominio a una dirección IPv6?", correct: "AAAA", wrong: ["MX","A","NS"], explanation: "El registro 'cuádruple A' es el estándar utilizado específicamente para almacenar direcciones IPv6 en el sistema DNS." },
+  { module: "SP.C3", q: "En el modelo cliente-servidor, ¿cómo se denomina al proceso de enviar un archivo desde el dispositivo del usuario hacia un repositorio central en la red?", correct: "Subida (Upload)", wrong: ["Multiplexación","Descarga (Download)","Sincronización (Sync)"], explanation: "La transferencia de datos desde un cliente hacia un servidor se define técnicamente como una carga o subida." },
+  { module: "SP.C3", q: "¿Cuál es la función del campo 'Suma de comprobación' (Checksum) presente en el encabezado de UDP?", correct: "Detectar si el datagrama sufrió alguna alteración o corrupción durante el tránsito.", wrong: ["Determinar la ruta más corta hacia el destino mediante el conteo de saltos.","Solicitar la retransmisión inmediata del paquete si se detecta un error.","Reordenar los fragmentos de datos que llegaron fuera de secuencia."], explanation: "El checksum se usa para verificar la integridad de los datos; si el cálculo no coincide en el destino, el datagrama se descarta." },
+  { module: "SP.C3", q: "¿Qué protocolo utiliza dos conexiones TCP simultáneas (una para control y otra para datos) para realizar transferencias de archivos?", correct: "FTP", wrong: ["SMB","HTTP","TFTP"], explanation: "FTP separa los comandos de control (puerto 21) del flujo real de datos (puerto 20) para permitir una gestión más flexible de la sesión." },
+  { module: "SP.C3", q: "¿Cuál es el objetivo principal de implementar una DMZ (Zona Desmilitarizada) en una red corporativa?", correct: "Alojar servidores que deben ser accesibles desde internet mientras se protege la red interna.", wrong: ["Eliminar la necesidad de un firewall en el perímetro de la red.","Cifrar todas las comunicaciones internas para evitar el espionaje de los empleados.","Proporcionar conectividad inalámbrica de alta velocidad para invitados."], explanation: "La DMZ actúa como una red intermedia que permite el acceso externo limitado sin exponer directamente los recursos críticos de la red privada." },
+  { module: "SP.C3", q: "¿Qué comando de diagnóstico permite ver el tiempo de respuesta de ida y vuelta (RTT) y verificar la conectividad de extremo a extremo?", correct: "ping", wrong: ["netstat","tracert","nslookup"], explanation: "Ping utiliza mensajes Echo Request/Reply y calcula el tiempo transcurrido (RTT) para determinar la latencia de la conexión." },
+  { module: "SP.C3", q: "¿Qué sucede con el valor del campo 'Hop Limit' en un paquete IPv6 cada vez que atraviesa un router?", correct: "Se reduce en 1.", wrong: ["Se duplica para permitir que el paquete recorra distancias mayores.","Se cambia a 0 inmediatamente si el router está congestionado.","Se mantiene constante hasta llegar al destino."], explanation: "El campo 'Hop Limit' de IPv6 funciona de forma idéntica al campo TTL de IPv4, sirviendo como mecanismo de prevención de bucles." },
+  { module: "SP.C3", q: "¿Cuál es la función del comando 'banner motd'?", correct: "Mostrar un mensaje de advertencia legal a cualquier usuario que intente acceder al dispositivo.", wrong: ["Configurar el mensaje que se envía automáticamente a los servidores de registro (syslog).","Establecer el nombre de host que aparece en el prompt de la CLI.","Definir la contraseña de bienvenida para el modo privilegiado."], explanation: "El banner MOTD (Message of the Day) se utiliza para notificar que el acceso no autorizado está prohibido, lo cual es vital en términos legales." },
+  { module: "SP.C3", q: "¿Qué protocolo utiliza el puerto UDP 67 para que los clientes soliciten una configuración de red inicial?", correct: "DHCP", wrong: ["DNS","HTTP","TFTP"], explanation: "El servidor DHCP escucha peticiones en el puerto 67, mientras que el cliente suele recibir las respuestas en el puerto 68." },
+  { module: "SP.C3", q: "¿Cuál es el beneficio de utilizar el comando 'login block-for 30 attempts 2 within 10'?", correct: "Mitigar ataques de fuerza bruta bloqueando temporalmente los intentos de inicio de sesión tras varios fallos.", wrong: ["Obligar a los usuarios a cambiar su contraseña cada 10 días.","Cerrar automáticamente las sesiones inactivas después de 30 minutos.","Limitar el número de usuarios que pueden estar conectados simultáneamente al router."], explanation: "Este comando detiene nuevos intentos de acceso por un tiempo definido si se detecta un patrón de errores sospechoso, dificultando el descifrado de contraseñas." },
+  { module: "SP.C3", q: "En el modelo OSI, ¿qué capa se encarga de la entrega de datos de extremo a extremo y del control de flujo mediante el tamaño de ventana?", correct: "Capa de Transporte", wrong: ["Capa de Sesión","Capa de Enlace de Datos","Capa de Red"], explanation: "La Capa 4 utiliza mecanismos como el control de flujo y la ventana deslizante (en TCP) para gestionar la velocidad de transferencia." },
+  { module: "SP.C3", q: "¿Qué herramienta de consola permite identificar el punto exacto de la red donde un paquete se pierde o se retrasa excesivamente?", correct: "tracert (o traceroute)", wrong: ["netstat","ipconfig","ping"], explanation: "Traceroute muestra cada salto intermedio y su tiempo de respuesta, permitiendo localizar fallas en nodos específicos del camino." },
+  { module: "SP.C3", q: "¿Qué comando se utiliza para guardar la configuración actual de la RAM en la memoria NVRAM para evitar que se pierda tras un reinicio?", correct: "copy running-config startup-config", wrong: ["copy startup-config running-config","save configuration flash","write erase"], explanation: "Este comando transfiere la configuración activa (RAM) al archivo que el dispositivo lee al arrancar (NVRAM)." },
 ];
 
 // ════════════════════════════════════════════════════
@@ -1208,9 +1273,19 @@ function getGroupedModules() {
 
 function getFiltered(mod) {
   if (mod === 'all') return [...ALL_QUESTIONS];
+  if (mod === 'P1') return ALL_QUESTIONS.filter(q => !q.module.startsWith('SP.'));
+  if (mod === 'P2') return ALL_QUESTIONS.filter(q => q.module.startsWith('SP.'));
   // group filter e.g. "1" → all submodules starting with "1."
   if (!mod.includes('.')) return ALL_QUESTIONS.filter(q => q.module.startsWith(mod + '.') || q.module === mod);
   return ALL_QUESTIONS.filter(q => q.module === mod);
+}
+
+function getModuleLabel(mod) {
+  if (mod === 'PPC') return 'Primer Punto de Control';
+  if (mod === 'SP.C1') return '2do Parcial · Cuestionario 1';
+  if (mod === 'SP.C2') return '2do Parcial · Cuestionario 2';
+  if (mod === 'SP.C3') return '2do Parcial · Cuestionario 3';
+  return `Módulo ${mod}`;
 }
 
 function countFor(mod) {
@@ -1222,14 +1297,30 @@ function countFor(mod) {
 function buildModuleFilter(containerId, mode) {
   const groups = getGroupedModules();
   const container = document.getElementById(containerId);
-  const onAllClick = mode === 'quiz' ? "selectFilter('all','all','quiz')" : "selectFilter('all','all','flash')";
+  const p1Count = ALL_QUESTIONS.filter(q => !q.module.startsWith('SP.')).length;
+  const p2Count = ALL_QUESTIONS.filter(q => q.module.startsWith('SP.')).length;
 
-  let html = `<div class="filter-chip-all active" id="${containerId}_all" onclick="${onAllClick}">
+  let html = `
+  <div class="filter-chip-all active" id="${containerId}_all" onclick="selectFilter('all','${containerId}','${mode}')">
     <span>📚 Todos los módulos</span>
     <span class="filter-group-count">${ALL_QUESTIONS.length} preguntas</span>
+  </div>
+  <div class="filter-chip-all" id="${containerId}_P1" onclick="selectFilter('P1','${containerId}','${mode}')">
+    <span>📖 1er Parcial</span>
+    <span class="filter-group-count">${p1Count} preguntas</span>
+  </div>
+  <div class="filter-chip-all" id="${containerId}_P2" onclick="selectFilter('P2','${containerId}','${mode}')">
+    <span>📝 2do Parcial</span>
+    <span class="filter-group-count">${p2Count} preguntas</span>
   </div>`;
 
+  html += `<div class="filter-section-header">📖 1er Parcial</div>`;
+
   Object.entries(groups).forEach(([parent, subs]) => {
+    if (parent === 'SP') {
+      html += `<div class="filter-section-header" style="margin-top:4px">📝 2do Parcial</div>`;
+    }
+
     const groupCount = countFor(parent);
     const groupOnClick = mode === 'quiz'
       ? `selectFilter('${parent}','${containerId}','quiz')`
@@ -1257,16 +1348,19 @@ function buildModuleFilter(containerId, mode) {
       const subOnClick = mode === 'quiz'
         ? `selectFilter('${sub}','${containerId}','quiz')`
         : `selectFilter('${sub}','${containerId}','flash')`;
+      const subLabel = sub.startsWith('SP.C') ? `Cuestionario ${sub.replace('SP.C','')}` : sub;
       return `<span class="filter-chip" id="${containerId}_chip_${sub.replace(/\./g,'_')}" onclick="${subOnClick}">
-        ${sub} <span style="opacity:0.6">(${subCount})</span>
+        ${subLabel} <span style="opacity:0.6">(${subCount})</span>
       </span>`;
     }).join('');
+
+    const parentLabel = parent === 'SP' ? '2do Parcial' : `Módulo ${parent}`;
 
     html += `<div class="filter-group">
       <div class="filter-group-header" onclick="toggleGroup('${bodyId}','${arrowId}')">
         <div class="filter-group-label">
           <span class="filter-chip group-select" id="${containerId}_chip_${parent}" onclick="event.stopPropagation();${groupOnClick}">
-            Módulo ${parent}
+            ${parentLabel}
           </span>
           <span class="filter-group-count">${groupCount} preguntas</span>
         </div>
@@ -1302,9 +1396,9 @@ function selectFilter(mod, containerId, mode) {
   }
 
   // Mark the selected one active
-  if (mod === 'all') {
-    const allEl = document.getElementById(`${containerId}_all`);
-    if (allEl) allEl.classList.add('active');
+  if (mod === 'all' || mod === 'P1' || mod === 'P2') {
+    const quickEl = document.getElementById(`${containerId}_${mod}`);
+    if (quickEl) quickEl.classList.add('active');
   } else if (!mod.includes('.')) {
     // group chip
     const chipEl = document.getElementById(`${containerId}_chip_${mod}`);
@@ -1432,7 +1526,7 @@ function renderQuestion() {
 
   document.getElementById('quizContent').innerHTML = `
     <div class="question-card">
-      <div class="q-module">Módulo ${q.module}</div>
+      <div class="q-module">${getModuleLabel(q.module)}</div>
       <div class="q-text">${q.q}</div>
       <div class="options" id="optionsWrap">
         ${options.map((opt, i) => `
@@ -1543,7 +1637,7 @@ function renderFlash() {
   document.getElementById('flashProgText').textContent = `${flashIndex+1} de ${total}`;
   document.getElementById('flashProgFill').style.width = Math.round(((flashIndex+1)/total)*100) + '%';
   document.getElementById('flashCounter').textContent = `${flashIndex+1} / ${total}`;
-  document.getElementById('cardModule').textContent = `Módulo ${q.module}`;
+  document.getElementById('cardModule').textContent = getModuleLabel(q.module);
   document.getElementById('cardQuestion').textContent = q.q;
 
   // Bold key term in answer
